@@ -17,128 +17,131 @@ const contentData = {
     about: {
         title: 'Nexus Remote Framework',
         lead: 'Enterprise-grade remote communication system for Roblox with advanced security, performance, and reliability features.',
-        content: `
-            <div class="content-section">
-                <h1>About Nexus</h1>
-                <p class="lead-text">${lead}</p>
-                
-                <div class="info-box info">
-                    <div class="info-box-icon">
-                        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
-                    </div>
-                    <div class="info-box-content">
-                        <p><strong>Version 3.0.0</strong> - Optimized for 100,000+ CCU and production environments with heavy load.</p>
-                    </div>
-                </div>
-                
-                <div class="feature-grid">
-                    <div class="feature-card">
-                        <div class="feature-card-icon">
-                            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+        get content() {
+            return `
+                <div class="content-section">
+                    <h1>About Nexus</h1>
+                    <p class="lead-text">${this.lead}</p>
+                    
+                    <div class="info-box info">
+                        <div class="info-box-icon">
+                            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
                         </div>
-                        <h3>Security First</h3>
-                        <p>Multilayered security with packet validation, rate limiting, and exploit protection.</p>
+                        <div class="info-box-content">
+                            <p><strong>Version 3.0.0</strong> - Optimized for 100,000+ CCU and production environments with heavy load.</p>
+                        </div>
                     </div>
                     
-                    <div class="feature-card">
-                        <div class="feature-card-icon">
-                            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clip-rule="evenodd"/></svg>
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <div class="feature-card-icon">
+                                <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                            </div>
+                            <h3>Security First</h3>
+                            <p>Multilayered security with packet validation, rate limiting, and exploit protection.</p>
                         </div>
-                        <h3>High Performance</h3>
-                        <p>Memory pooling, batching, and optimized serialization for maximum throughput.</p>
+                        
+                        <div class="feature-card">
+                            <div class="feature-card-icon">
+                                <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clip-rule="evenodd"/></svg>
+                            </div>
+                            <h3>High Performance</h3>
+                            <p>Memory pooling, batching, and optimized serialization for maximum throughput.</p>
+                        </div>
+                        
+                        <div class="feature-card">
+                            <div class="feature-card-icon">
+                                <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/></svg>
+                            </div>
+                            <h3>Enterprise Ready</h3>
+                            <p>Built for large-scale games with analytics, monitoring, and fault tolerance.</p>
+                        </div>
                     </div>
                     
-                    <div class="feature-card">
-                        <div class="feature-card-icon">
-                            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/></svg>
+                    <h2>Key Features</h2>
+                    <ul>
+                        <li><strong>Advanced Serialization</strong> - Multilayered compression with RLE, dictionary, and custom algorithms</li>
+                        <li><strong>Dual-Layer Rate Limiting</strong> - Both client and server-side protection</li>
+                        <li><strong>Zero-Trust Security</strong> - Packet validation, signature verification, threat detection</li>
+                        <li><strong>Complete Type Support</strong> - All Roblox types + custom validation schemas</li>
+                        <li><strong>Memory Efficient</strong> - Object pooling and optimized garbage collection</li>
+                        <li><strong>Promise-Based API</strong> - Modern async/await patterns</li>
+                        <li><strong>Middleware System</strong> - Extensible with custom middleware and interceptors</li>
+                        <li><strong>Real-time Analytics</strong> - Performance monitoring and security event tracking</li>
+                    </ul>
+                    
+                    <h2>System Architecture</h2>
+                    <p>Nexus uses a modular architecture with independent components that work together:</p>
+                    
+                    <div class="flow-diagram">
+                        <div class="flow-steps">
+                            <div class="flow-step">
+                                <div class="flow-step-box">Client Request</div>
+                                <div class="flow-step-label">Player Action</div>
+                            </div>
+                            <div class="flow-arrow"></div>
+                            <div class="flow-step">
+                                <div class="flow-step-box">Validation</div>
+                                <div class="flow-step-label">Schema & Rate Limit</div>
+                            </div>
+                            <div class="flow-arrow"></div>
+                            <div class="flow-step">
+                                <div class="flow-step-box">Middleware</div>
+                                <div class="flow-step-label">Custom Logic</div>
+                            </div>
+                            <div class="flow-arrow"></div>
+                            <div class="flow-step">
+                                <div class="flow-step-box">Handler</div>
+                                <div class="flow-step-label">Business Logic</div>
+                            </div>
+                            <div class="flow-arrow"></div>
+                            <div class="flow-step">
+                                <div class="flow-step-box">Response</div>
+                                <div class="flow-step-label">Signed & Validated</div>
+                            </div>
                         </div>
-                        <h3>Enterprise Ready</h3>
-                        <p>Built for large-scale games with analytics, monitoring, and fault tolerance.</p>
+                    </div>
+                    
+                    <h2>Data Flow</h2>
+                    <ol>
+                        <li>Client prepares data and creates a signed packet</li>
+                        <li>Packet goes through serialization (optional compression)</li>
+                        <li>Server receives and validates packet signature and TTL</li>
+                        <li>Rate limiting checks and circuit breaker evaluation</li>
+                        <li>Schema validation against defined rules</li>
+                        <li>Middleware processing (authentication, logging, etc.)</li>
+                        <li>Business logic execution in handler</li>
+                        <li>Response serialization and signing</li>
+                        <li>Return to client with validation</li>
+                    </ol>
+                    
+                    <div class="info-box success">
+                        <div class="info-box-icon">
+                            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                        </div>
+                        <div class="info-box-content">
+                            <p><strong>Production Ready:</strong> Nexus has been tested with 5,000,000,000+ total visits and is optimized for enterprise-scale deployment.</p>
+                        </div>
                     </div>
                 </div>
-                
-                <h2>Key Features</h2>
-                <ul>
-                    <li><strong>Advanced Serialization</strong> - Multilayered compression with RLE, dictionary, and custom algorithms</li>
-                    <li><strong>Dual-Layer Rate Limiting</strong> - Both client and server-side protection</li>
-                    <li><strong>Zero-Trust Security</strong> - Packet validation, signature verification, threat detection</li>
-                    <li><strong>Complete Type Support</strong> - All Roblox types + custom validation schemas</li>
-                    <li><strong>Memory Efficient</strong> - Object pooling and optimized garbage collection</li>
-                    <li><strong>Promise-Based API</strong> - Modern async/await patterns</li>
-                    <li><strong>Middleware System</strong> - Extensible with custom middleware and interceptors</li>
-                    <li><strong>Real-time Analytics</strong> - Performance monitoring and security event tracking</li>
-                </ul>
-                
-                <h2>System Architecture</h2>
-                <p>Nexus uses a modular architecture with independent components that work together:</p>
-                
-                <div class="flow-diagram">
-                    <div class="flow-steps">
-                        <div class="flow-step">
-                            <div class="flow-step-box">Client Request</div>
-                            <div class="flow-step-label">Player Action</div>
-                        </div>
-                        <div class="flow-arrow"></div>
-                        <div class="flow-step">
-                            <div class="flow-step-box">Validation</div>
-                            <div class="flow-step-label">Schema & Rate Limit</div>
-                        </div>
-                        <div class="flow-arrow"></div>
-                        <div class="flow-step">
-                            <div class="flow-step-box">Middleware</div>
-                            <div class="flow-step-label">Custom Logic</div>
-                        </div>
-                        <div class="flow-arrow"></div>
-                        <div class="flow-step">
-                            <div class="flow-step-box">Handler</div>
-                            <div class="flow-step-label">Business Logic</div>
-                        </div>
-                        <div class="flow-arrow"></div>
-                        <div class="flow-step">
-                            <div class="flow-step-box">Response</div>
-                            <div class="flow-step-label">Signed & Validated</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <h2>Data Flow</h2>
-                <ol>
-                    <li>Client prepares data and creates a signed packet</li>
-                    <li>Packet goes through serialization (optional compression)</li>
-                    <li>Server receives and validates packet signature and TTL</li>
-                    <li>Rate limiting checks and circuit breaker evaluation</li>
-                    <li>Schema validation against defined rules</li>
-                    <li>Middleware processing (authentication, logging, etc.)</li>
-                    <li>Business logic execution in handler</li>
-                    <li>Response serialization and signing</li>
-                    <li>Return to client with validation</li>
-                </ol>
-                
-                <div class="info-box success">
-                    <div class="info-box-icon">
-                        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                    </div>
-                    <div class="info-box-content">
-                        <p><strong>Production Ready:</strong> Nexus has been tested with 5,000,000,000+ total visits and is optimized for enterprise-scale deployment.</p>
-                    </div>
-                </div>
-            </div>
-        `
+            `;
+        }
     },
 
     // Getting Started page
     'getting-started': {
         title: 'Getting Started',
-        content: `
-            <div class="content-section">
-                <h1>Getting Started with Nexus</h1>
-                <p class="lead-text">Learn how to install and configure Nexus for your Roblox game.</p>
-                
-                <h2>Installation</h2>
-                <p>Place all Nexus modules in a folder called <code class="inline-code">Nexus</code> within <code class="inline-code">ReplicatedStorage</code>.</p>
-                
-                <div class="code-block-inline">
-                    <pre><code>ReplicatedStorage/
+        get content() {
+            return `
+                <div class="content-section">
+                    <h1>Getting Started with Nexus</h1>
+                    <p class="lead-text">Learn how to install and configure Nexus for your Roblox game.</p>
+                    
+                    <h2>Installation</h2>
+                    <p>Place all Nexus modules in a folder called <code class="inline-code">Nexus</code> within <code class="inline-code">ReplicatedStorage</code>.</p>
+                    
+                    <div class="code-block-inline">
+                        <pre><code>ReplicatedStorage/
 └── Nexus/
     ├── init.lua
     ├── serializer.lua
@@ -146,12 +149,12 @@ const contentData = {
     ├── security.lua
     ├── ratelimiter.lua
     └── ... (other modules)</code></pre>
-                </div>
-                
-                <h2>Basic Setup</h2>
-                <h3>Server Setup</h3>
-                <div class="code-block-inline">
-                    <pre><code>-- ServerScriptService: Main.server.lua
+                    </div>
+                    
+                    <h2>Basic Setup</h2>
+                    <h3>Server Setup</h3>
+                    <div class="code-block-inline">
+                        <pre><code>-- ServerScriptService: Main.server.lua
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Nexus = require(ReplicatedStorage.Nexus.init)
 
@@ -182,11 +185,11 @@ nexus:On("PlayerJoined", function(player, playerId, username, joinTime)
     print(\`Player joined: \${username} (\${playerId}) at \${joinTime}\`)
     -- Your game logic here
 end)</code></pre>
-                </div>
-                
-                <h3>Client Setup</h3>
-                <div class="code-block-inline">
-                    <pre><code>-- LocalScript: Client.client.lua
+                    </div>
+                    
+                    <h3>Client Setup</h3>
+                    <div class="code-block-inline">
+                        <pre><code>-- LocalScript: Client.client.lua
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Nexus = require(ReplicatedStorage.Nexus.init)
 
@@ -200,13 +203,13 @@ nexus:Fire("PlayerJoined",
     game.Players.LocalPlayer.Name,
     os.time()
 )</code></pre>
-                </div>
-                
-                <h2>Quick Examples</h2>
-                
-                <h3>Simple Remote Function</h3>
-                <div class="code-block-inline">
-                    <pre><code>-- Server: Register and handle
+                    </div>
+                    
+                    <h2>Quick Examples</h2>
+                    
+                    <h3>Simple Remote Function</h3>
+                    <div class="code-block-inline">
+                        <pre><code>-- Server: Register and handle
 nexus:RegisterRemote("GetPlayerData", "Function", {
     schema = {"string"},  -- Expects one string argument
     timeout = 5  -- 5 second timeout
@@ -225,125 +228,127 @@ local result = nexus:Invoke("GetPlayerData", "inventory")
 if result.success then
     print("Got inventory:", result.data)
 end</code></pre>
-                </div>
-                
-                <h3>Batch Operations</h3>
-                <div class="code-block-inline">
-                    <pre><code>-- Batch multiple operations
+                    </div>
+                    
+                    <h3>Batch Operations</h3>
+                    <div class="code-block-inline">
+                        <pre><code>-- Batch multiple operations
 nexus:EnableBatching("PlayerUpdates", 0.1, 50)  -- Batch every 100ms, max 50
 
 -- Send multiple updates efficiently
 for i = 1, 10 do
     nexus:Fire("PlayerUpdates", player, updateType, updateData)
 end</code></pre>
-                </div>
-                
-                <h2>Next Steps</h2>
-                <p>Once you have the basics working, explore:</p>
-                <ul>
-                    <li><strong>Security Configuration</strong> - Set up packet validation and threat detection</li>
-                    <li><strong>Custom Middleware</strong> - Add authentication, logging, or analytics</li>
-                    <li><strong>Performance Tuning</strong> - Adjust compression and batching settings</li>
-                    <li><strong>Monitoring</strong> - Set up analytics and metrics tracking</li>
-                </ul>
-                
-                <div class="info-box warning">
-                    <div class="info-box-icon">
-                        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
                     </div>
-                    <div class="info-box-content">
-                        <p><strong>Important:</strong> Always enable security features in production. Test rate limits and validation thoroughly before deployment.</p>
+                    
+                    <h2>Next Steps</h2>
+                    <p>Once you have the basics working, explore:</p>
+                    <ul>
+                        <li><strong>Security Configuration</strong> - Set up packet validation and threat detection</li>
+                        <li><strong>Custom Middleware</strong> - Add authentication, logging, or analytics</li>
+                        <li><strong>Performance Tuning</strong> - Adjust compression and batching settings</li>
+                        <li><strong>Monitoring</strong> - Set up analytics and metrics tracking</li>
+                    </ul>
+                    
+                    <div class="info-box warning">
+                        <div class="info-box-icon">
+                            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                        </div>
+                        <div class="info-box-content">
+                            <p><strong>Important:</strong> Always enable security features in production. Test rate limits and validation thoroughly before deployment.</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-        `
+            `;
+        }
     },
 
     // Architecture page
     architecture: {
         title: 'Architecture',
-        content: `
-            <div class="content-section">
-                <h1>System Architecture</h1>
-                <p class="lead-text">Nexus is built with a modular, layered architecture designed for scalability and maintainability.</p>
-                
-                <h2>Core Components</h2>
-                
-                <div class="flow-diagram">
-                    <div class="flow-steps">
-                        <div class="flow-step">
-                            <div class="flow-step-box">NexusRemote</div>
-                            <div class="flow-step-label">Main Module</div>
-                        </div>
-                        <div class="flow-arrow"></div>
-                        <div class="flow-step">
-                            <div class="flow-step-box">Subsystems</div>
-                            <div class="flow-step-label">8 Modules</div>
-                        </div>
-                        <div class="flow-arrow"></div>
-                        <div class="flow-step">
-                            <div class="flow-step-box">Roblox</div>
-                            <div class="flow-step-label">Remote Events</div>
+        get content() {
+            return `
+                <div class="content-section">
+                    <h1>System Architecture</h1>
+                    <p class="lead-text">Nexus is built with a modular, layered architecture designed for scalability and maintainability.</p>
+                    
+                    <h2>Core Components</h2>
+                    
+                    <div class="flow-diagram">
+                        <div class="flow-steps">
+                            <div class="flow-step">
+                                <div class="flow-step-box">NexusRemote</div>
+                                <div class="flow-step-label">Main Module</div>
+                            </div>
+                            <div class="flow-arrow"></div>
+                            <div class="flow-step">
+                                <div class="flow-step-box">Subsystems</div>
+                                <div class="flow-step-label">8 Modules</div>
+                            </div>
+                            <div class="flow-arrow"></div>
+                            <div class="flow-step">
+                                <div class="flow-step-box">Roblox</div>
+                                <div class="flow-step-label">Remote Events</div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                
-                <h3>Component Breakdown</h3>
-                <table class="param-table">
-                    <thead>
-                        <tr>
-                            <th>Module</th>
-                            <th>Purpose</th>
-                            <th>Key Features</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>NexusRemote</strong></td>
-                            <td>Main orchestrator</td>
-                            <td>Remote registration, communication, middleware</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Serializer</strong></td>
-                            <td>Data transformation</td>
-                            <td>Compression, encryption, type serialization</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Validator</strong></td>
-                            <td>Data validation</td>
-                            <td>Schema validation, type checking, exploit prevention</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Security</strong></td>
-                            <td>Security layer</td>
-                            <td>Packet signing, threat detection, session management</td>
-                        </tr>
-                        <tr>
-                            <td><strong>RateLimiter</strong></td>
-                            <td>Traffic control</td>
-                            <td>Dual-layer limiting, adaptive limits, burst protection</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Analytics</strong></td>
-                            <td>Monitoring</td>
-                            <td>Performance tracking, error logging, security events</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Promise</strong></td>
-                            <td>Async handling</td>
-                            <td>Promise/A+ implementation, async/await support</td>
-                        </tr>
-                        <tr>
-                            <td><strong>MemoryPool</strong></td>
-                            <td>Performance</td>
-                            <td>Object pooling, memory optimization</td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <h2>Data Flow Architecture</h2>
-                <div class="code-block-inline">
-                    <pre><code>┌─────────────────────────────────────────────────────────┐
+                    
+                    <h3>Component Breakdown</h3>
+                    <table class="param-table">
+                        <thead>
+                            <tr>
+                                <th>Module</th>
+                                <th>Purpose</th>
+                                <th>Key Features</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>NexusRemote</strong></td>
+                                <td>Main orchestrator</td>
+                                <td>Remote registration, communication, middleware</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Serializer</strong></td>
+                                <td>Data transformation</td>
+                                <td>Compression, encryption, type serialization</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Validator</strong></td>
+                                <td>Data validation</td>
+                                <td>Schema validation, type checking, exploit prevention</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Security</strong></td>
+                                <td>Security layer</td>
+                                <td>Packet signing, threat detection, session management</td>
+                            </tr>
+                            <tr>
+                                <td><strong>RateLimiter</strong></td>
+                                <td>Traffic control</td>
+                                <td>Dual-layer limiting, adaptive limits, burst protection</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Analytics</strong></td>
+                                <td>Monitoring</td>
+                                <td>Performance tracking, error logging, security events</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Promise</strong></td>
+                                <td>Async handling</td>
+                                <td>Promise/A+ implementation, async/await support</td>
+                            </tr>
+                            <tr>
+                                <td><strong>MemoryPool</strong></td>
+                                <td>Performance</td>
+                                <td>Object pooling, memory optimization</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h2>Data Flow Architecture</h2>
+                    <div class="code-block-inline">
+                        <pre><code>┌─────────────────────────────────────────────────────────┐
 │                    Client Request                       │
 ├─────────────────────────────────────────────────────────┤
 │ 1. Create packet with data                             │
@@ -365,40 +370,40 @@ end</code></pre>
 │ 7. Process response through interceptors               │
 │ 8. Sign and send response                              │
 └─────────────────────────────────────────────────────────┘</code></pre>
-                </div>
-                
-                <h2>Security Architecture</h2>
-                <p>Nexus implements a zero-trust security model with multiple layers:</p>
-                
-                <h3>Layer 1: Packet Security</h3>
-                <ul>
-                    <li><strong>Signature Verification</strong> - All packets are signed with HMAC</li>
-                    <li><strong>TTL Validation</strong> - Packets expire after configured time</li>
-                    <li><strong>Replay Attack Protection</strong> - Nonce tracking prevents reuse</li>
-                    <li><strong>Checksum Validation</strong> - Ensures packet integrity</li>
-                </ul>
-                
-                <h3>Layer 2: Rate Limiting</h3>
-                <ul>
-                    <li><strong>Client-side limiting</strong> - Prevents client abuse</li>
-                    <li><strong>Server-side limiting</strong> - Per-player and global limits</li>
-                    <li><strong>Adaptive limits</strong> - Adjusts based on trust score</li>
-                    <li><strong>Burst protection</strong> - Allows short bursts within limits</li>
-                </ul>
-                
-                <h3>Layer 3: Validation</h3>
-                <ul>
-                    <li><strong>Schema validation</strong> - Type and structure checking</li>
-                    <li><strong>Exploit pattern detection</strong> - Blocks known attack patterns</li>
-                    <li><strong>Depth limiting</strong> - Prevents recursion attacks</li>
-                    <li><strong>Size limits</strong> - Prevents memory exhaustion</li>
-                </ul>
-                
-                <h2>Performance Architecture</h2>
-                
-                <h3>Memory Management</h3>
-                <div class="code-block-inline">
-                    <pre><code>-- Object pooling example
+                    </div>
+                    
+                    <h2>Security Architecture</h2>
+                    <p>Nexus implements a zero-trust security model with multiple layers:</p>
+                    
+                    <h3>Layer 1: Packet Security</h3>
+                    <ul>
+                        <li><strong>Signature Verification</strong> - All packets are signed with HMAC</li>
+                        <li><strong>TTL Validation</strong> - Packets expire after configured time</li>
+                        <li><strong>Replay Attack Protection</strong> - Nonce tracking prevents reuse</li>
+                        <li><strong>Checksum Validation</strong> - Ensures packet integrity</li>
+                    </ul>
+                    
+                    <h3>Layer 2: Rate Limiting</h3>
+                    <ul>
+                        <li><strong>Client-side limiting</strong> - Prevents client abuse</li>
+                        <li><strong>Server-side limiting</strong> - Per-player and global limits</li>
+                        <li><strong>Adaptive limits</strong> - Adjusts based on trust score</li>
+                        <li><strong>Burst protection</strong> - Allows short bursts within limits</li>
+                    </ul>
+                    
+                    <h3>Layer 3: Validation</h3>
+                    <ul>
+                        <li><strong>Schema validation</strong> - Type and structure checking</li>
+                        <li><strong>Exploit pattern detection</strong> - Blocks known attack patterns</li>
+                        <li><strong>Depth limiting</strong> - Prevents recursion attacks</li>
+                        <li><strong>Size limits</strong> - Prevents memory exhaustion</li>
+                    </ul>
+                    
+                    <h2>Performance Architecture</h2>
+                    
+                    <h3>Memory Management</h3>
+                    <div class="code-block-inline">
+                        <pre><code>-- Object pooling example
 local pool = MemoryPool.new()
 pool:Initialize(1000)  -- Pool of 1000 objects
 
@@ -417,104 +422,106 @@ packet.timestamp = os.clock()
 
 -- Return to pool when done
 pool:Release("packet", packet)</code></pre>
-                </div>
-                
-                <h3>Compression Strategies</h3>
-                <p>Nexus uses multiple compression algorithms based on data characteristics:</p>
-                <table class="param-table">
-                    <thead>
-                        <tr>
-                            <th>Algorithm</th>
-                            <th>Best For</th>
-                            <th>Compression Ratio</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>RLE (Run-Length Encoding)</td>
-                            <td>Repeated patterns, numeric data</td>
-                            <td>2-10x</td>
-                        </tr>
-                        <tr>
-                            <td>Dictionary Compression</td>
-                            <td>JSON-like data, common strings</td>
-                            <td>1.5-4x</td>
-                        </tr>
-                        <tr>
-                            <td>Base64 (for binary)</td>
-                            <td>Binary data, URL safety</td>
-                            <td>1.33x expansion</td>
-                        </tr>
-                        <tr>
-                            <td>Custom Algorithms</td>
-                            <td>Roblox-specific data types</td>
-                            <td>2-8x</td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <h2>Scalability Features</h2>
-                <ul>
-                    <li><strong>Horizontal Scaling</strong> - Stateless design allows multiple servers</li>
-                    <li><strong>Memory Store Support</strong> - Distributed rate limiting</li>
-                    <li><strong>Adaptive Load Balancing</strong> - Adjusts limits based on load</li>
-                    <li><strong>Connection Pooling</strong> - Reuses connections efficiently</li>
-                    <li><strong>Batch Processing</strong> - Groups operations for efficiency</li>
-                </ul>
-                
-                <div class="info-box info">
-                    <div class="info-box-icon">
-                        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
                     </div>
-                    <div class="info-box-content">
-                        <p><strong>Architecture Tip:</strong> Nexus modules are designed to work independently. You can use the Serializer or Validator modules separately if needed.</p>
+                    
+                    <h3>Compression Strategies</h3>
+                    <p>Nexus uses multiple compression algorithms based on data characteristics:</p>
+                    <table class="param-table">
+                        <thead>
+                            <tr>
+                                <th>Algorithm</th>
+                                <th>Best For</th>
+                                <th>Compression Ratio</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>RLE (Run-Length Encoding)</td>
+                                <td>Repeated patterns, numeric data</td>
+                                <td>2-10x</td>
+                            </tr>
+                            <tr>
+                                <td>Dictionary Compression</td>
+                                <td>JSON-like data, common strings</td>
+                                <td>1.5-4x</td>
+                            </tr>
+                            <tr>
+                                <td>Base64 (for binary)</td>
+                                <td>Binary data, URL safety</td>
+                                <td>1.33x expansion</td>
+                            </tr>
+                            <tr>
+                                <td>Custom Algorithms</td>
+                                <td>Roblox-specific data types</td>
+                                <td>2-8x</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h2>Scalability Features</h2>
+                    <ul>
+                        <li><strong>Horizontal Scaling</strong> - Stateless design allows multiple servers</li>
+                        <li><strong>Memory Store Support</strong> - Distributed rate limiting</li>
+                        <li><strong>Adaptive Load Balancing</strong> - Adjusts limits based on load</li>
+                        <li><strong>Connection Pooling</strong> - Reuses connections efficiently</li>
+                        <li><strong>Batch Processing</strong> - Groups operations for efficiency</li>
+                    </ul>
+                    
+                    <div class="info-box info">
+                        <div class="info-box-icon">
+                            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
+                        </div>
+                        <div class="info-box-content">
+                            <p><strong>Architecture Tip:</strong> Nexus modules are designed to work independently. You can use the Serializer or Validator modules separately if needed.</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-        `
+            `;
+        }
     },
 
     // NexusRemote API
     nexusremote: {
         title: 'NexusRemote API',
-        content: `
-            <div class="content-section">
-                <h1>NexusRemote Class</h1>
-                <p class="lead-text">The main orchestrator class that manages all remote communication.</p>
-                
-                <div class="method-badge both">
-                    <span>Class</span>
-                </div>
-                
-                <h2>Constructor</h2>
-                <div class="code-block-inline">
-                    <pre><code>local Nexus = require(ReplicatedStorage.Nexus.init)
+        get content() {
+            return `
+                <div class="content-section">
+                    <h1>NexusRemote Class</h1>
+                    <p class="lead-text">The main orchestrator class that manages all remote communication.</p>
+                    
+                    <div class="method-badge both">
+                        <span>Class</span>
+                    </div>
+                    
+                    <h2>Constructor</h2>
+                    <div class="code-block-inline">
+                        <pre><code>local Nexus = require(ReplicatedStorage.Nexus.init)
 local nexus = Nexus.new(config: RemoteConfig?)</code></pre>
-                </div>
-                
-                <h3>Parameters</h3>
-                <table class="param-table">
-                    <thead>
-                        <tr>
-                            <th>Parameter</th>
-                            <th>Type</th>
-                            <th>Required</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><span class="param-name">config</span></td>
-                            <td><span class="param-type">RemoteConfig?</span></td>
-                            <td><span class="param-required optional">Optional</span></td>
-                            <td class="param-desc">Configuration object for Nexus instance</td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <h3>RemoteConfig Type</h3>
-                <div class="code-block-inline">
-                    <pre><code>type RemoteConfig = {
+                    </div>
+                    
+                    <h3>Parameters</h3>
+                    <table class="param-table">
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Type</th>
+                                <th>Required</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="param-name">config</span></td>
+                                <td><span class="param-type">RemoteConfig?</span></td>
+                                <td><span class="param-required optional">Optional</span></td>
+                                <td class="param-desc">Configuration object for Nexus instance</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h3>RemoteConfig Type</h3>
+                    <div class="code-block-inline">
+                        <pre><code>type RemoteConfig = {
     debug: boolean?,
     security: {
         enforceRateLimits: boolean?,
@@ -533,52 +540,52 @@ local nexus = Nexus.new(config: RemoteConfig?)</code></pre>
         cleanupInterval: number?
     }
 }</code></pre>
-                </div>
-                
-                <h2>Static Methods</h2>
-                
-                <h3>GetInstance</h3>
-                <div class="code-block-inline">
-                    <pre><code>local nexus = Nexus.GetInstance()</code></pre>
-                </div>
-                <p>Returns the active Nexus instance (singleton pattern).</p>
-                
-                <h3>IsInitialized</h3>
-                <div class="code-block-inline">
-                    <pre><code>local initialized = Nexus.IsInitialized()</code></pre>
-                </div>
-                <p>Returns <code class="inline-code">true</code> if Nexus has been initialized.</p>
-                
-                <h2>Instance Methods</h2>
-                
-                <h3>Initialize</h3>
-                <div class="code-block-inline">
-                    <pre><code>nexus:Initialize(options: {
+                    </div>
+                    
+                    <h2>Static Methods</h2>
+                    
+                    <h3>GetInstance</h3>
+                    <div class="code-block-inline">
+                        <pre><code>local nexus = Nexus.GetInstance()</code></pre>
+                    </div>
+                    <p>Returns the active Nexus instance (singleton pattern).</p>
+                    
+                    <h3>IsInitialized</h3>
+                    <div class="code-block-inline">
+                        <pre><code>local initialized = Nexus.IsInitialized()</code></pre>
+                    </div>
+                    <p>Returns <code class="inline-code">true</code> if Nexus has been initialized.</p>
+                    
+                    <h2>Instance Methods</h2>
+                    
+                    <h3>Initialize</h3>
+                    <div class="code-block-inline">
+                        <pre><code>nexus:Initialize(options: {
     remotesFolder: Folder?,
     debug: boolean?,
     profile: boolean?
 }): NexusRemote</code></pre>
-                </div>
-                <p>Initializes Nexus with the given options. Must be called before using any other methods.</p>
-                
-                <h3>RegisterRemote</h3>
-                <div class="code-block-inline">
-                    <pre><code>nexus:RegisterRemote(name: string, remoteType: "Event" | "Function", config: RemoteConfig?): NexusRemote</code></pre>
-                </div>
-                <p>Registers a new remote with the given name and type.</p>
-                
-                <h3>On</h3>
-                <div class="code-block-inline">
-                    <pre><code>nexus:On(remoteName: string, handler: (player: Player?, ...any) -> any, options: {
+                    </div>
+                    <p>Initializes Nexus with the given options. Must be called before using any other methods.</p>
+                    
+                    <h3>RegisterRemote</h3>
+                    <div class="code-block-inline">
+                        <pre><code>nexus:RegisterRemote(name: string, remoteType: "Event" | "Function", config: RemoteConfig?): NexusRemote</code></pre>
+                    </div>
+                    <p>Registers a new remote with the given name and type.</p>
+                    
+                    <h3>On</h3>
+                    <div class="code-block-inline">
+                        <pre><code>nexus:On(remoteName: string, handler: (player: Player?, ...any) -> any, options: {
     async: boolean?,
     timeout: number?
 }?): NexusRemote</code></pre>
-                </div>
-                <p>Sets up a handler for incoming remote calls.</p>
-                
-                <h3>Fire / FireClient / FireAllClients</h3>
-                <div class="code-block-inline">
-                    <pre><code>-- Client to server
+                    </div>
+                    <p>Sets up a handler for incoming remote calls.</p>
+                    
+                    <h3>Fire / FireClient / FireAllClients</h3>
+                    <div class="code-block-inline">
+                        <pre><code>-- Client to server
 nexus:Fire(remoteName: string, ...any): boolean
 
 -- Server to specific client
@@ -586,22 +593,22 @@ nexus:FireClient(remoteName: string, player: Player, ...any): boolean
 
 -- Server to all clients
 nexus:FireAllClients(remoteName: string, ...any): boolean</code></pre>
-                </div>
-                <p>Sends events to the server or clients.</p>
-                
-                <h3>Invoke / InvokeClient</h3>
-                <div class="code-block-inline">
-                    <pre><code>-- Client to server (returns response)
+                    </div>
+                    <p>Sends events to the server or clients.</p>
+                    
+                    <h3>Invoke / InvokeClient</h3>
+                    <div class="code-block-inline">
+                        <pre><code>-- Client to server (returns response)
 local response = nexus:Invoke(remoteName: string, ...any): any
 
 -- Server to client (returns response)
 local response = nexus:InvokeClient(remoteName: string, player: Player, ...any): any</code></pre>
-                </div>
-                <p>Invokes remote functions and waits for a response.</p>
-                
-                <h2>Usage Example</h2>
-                <div class="code-block-inline">
-                    <pre><code>-- Complete example
+                    </div>
+                    <p>Invokes remote functions and waits for a response.</p>
+                    
+                    <h2>Usage Example</h2>
+                    <div class="code-block-inline">
+                        <pre><code>-- Complete example
 local Nexus = require(ReplicatedStorage.Nexus.init)
 
 -- Create instance
@@ -638,61 +645,245 @@ nexus:On("PlayerChat", function(player, message, timestamp)
     -- Broadcast to other players
     nexus:FireExcept("PlayerChat", player, player.Name, message, timestamp)
 end)</code></pre>
-                </div>
-                
-                <h2>Error Handling</h2>
-                <p>NexusRemote methods return structured error responses:</p>
-                <div class="code-block-inline">
-                    <pre><code>{
+                    </div>
+                    
+                    <h2>Error Handling</h2>
+                    <p>NexusRemote methods return structured error responses:</p>
+                    <div class="code-block-inline">
+                        <pre><code>{
     success: boolean,
     error: string?,
     code: string?,
     timestamp: number,
     requestId: string?
 }</code></pre>
+                    </div>
+                    
+                    <table class="param-table">
+                        <thead>
+                            <tr>
+                                <th>Error Code</th>
+                                <th>Description</th>
+                                <th>Possible Causes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code class="inline-code">RATE_LIMIT</code></td>
+                                <td>Rate limit exceeded</td>
+                                <td>Too many requests in time window</td>
+                            </tr>
+                            <tr>
+                                <td><code class="inline-code">SECURITY_ERROR</code></td>
+                                <td>Security violation</td>
+                                <td>Invalid signature, expired packet</td>
+                            </tr>
+                            <tr>
+                                <td><code class="inline-code">VALIDATION_ERROR</code></td>
+                                <td>Schema validation failed</td>
+                                <td>Wrong data type or structure</td>
+                            </tr>
+                            <tr>
+                                <td><code class="inline-code">TIMEOUT</code></td>
+                                <td>Request timeout</td>
+                                <td>Handler took too long</td>
+                            </tr>
+                            <tr>
+                                <td><code class="inline-code">CIRCUIT_OPEN</code></td>
+                                <td>Circuit breaker open</td>
+                                <td>Too many failures on remote</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-                
-                <table class="param-table">
-                    <thead>
-                        <tr>
-                            <th>Error Code</th>
-                            <th>Description</th>
-                            <th>Possible Causes</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><code class="inline-code">RATE_LIMIT</code></td>
-                            <td>Rate limit exceeded</td>
-                            <td>Too many requests in time window</td>
-                        </tr>
-                        <tr>
-                            <td><code class="inline-code">SECURITY_ERROR</code></td>
-                            <td>Security violation</td>
-                            <td>Invalid signature, expired packet</td>
-                        </tr>
-                        <tr>
-                            <td><code class="inline-code">VALIDATION_ERROR</code></td>
-                            <td>Schema validation failed</td>
-                            <td>Wrong data type or structure</td>
-                        </tr>
-                        <tr>
-                            <td><code class="inline-code">TIMEOUT</code></td>
-                            <td>Request timeout</td>
-                            <td>Handler took too long</td>
-                        </tr>
-                        <tr>
-                            <td><code class="inline-code">CIRCUIT_OPEN</code></td>
-                            <td>Circuit breaker open</td>
-                            <td>Too many failures on remote</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        `
+            `;
+        }
     },
 
-    // More pages would follow in a real implementation...
+    // Initialize page
+    initialization: {
+        title: 'Initialize Method',
+        get content() {
+            return `
+                <div class="content-section">
+                    <h1>Initialize Method</h1>
+                    <p class="lead-text">Sets up Nexus with configuration options and prepares it for use.</p>
+                    
+                    <div class="method-badge both">
+                        <span>Method</span>
+                    </div>
+                    
+                    <h2>Syntax</h2>
+                    <div class="code-block-inline">
+                        <pre><code>nexus:Initialize(options: {
+    remotesFolder: Folder?,
+    debug: boolean?,
+    profile: boolean?
+}): NexusRemote</code></pre>
+                    </div>
+                    
+                    <h2>Parameters</h2>
+                    <table class="param-table">
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Type</th>
+                                <th>Required</th>
+                                <th>Default</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="param-name">remotesFolder</span></td>
+                                <td><span class="param-type">Folder?</span></td>
+                                <td><span class="param-required optional">Optional</span></td>
+                                <td>ReplicatedStorage.NexusRemotes</td>
+                                <td class="param-desc">Folder where remote instances will be created</td>
+                            </tr>
+                            <tr>
+                                <td><span class="param-name">debug</span></td>
+                                <td><span class="param-type">boolean?</span></td>
+                                <td><span class="param-required optional">Optional</span></td>
+                                <td>true in Studio</td>
+                                <td class="param-desc">Enable debug logging and verbose output</td>
+                            </tr>
+                            <tr>
+                                <td><span class="param-name">profile</span></td>
+                                <td><span class="param-type">boolean?</span></td>
+                                <td><span class="param-required optional">Optional</span></td>
+                                <td>false</td>
+                                <td class="param-desc">Enable performance profiling</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h2>Returns</h2>
+                    <p>Returns the NexusRemote instance for method chaining.</p>
+                    
+                    <h2>Description</h2>
+                    <p>The <code class="inline-code">Initialize</code> method must be called before using any other Nexus methods. It performs the following actions:</p>
+                    
+                    <ol>
+                        <li>Creates or finds the remotes folder in ReplicatedStorage</li>
+                        <li>Initializes all sub-systems (Serializer, Validator, Security, etc.)</li>
+                        <li>Sets up player connection/disconnection tracking (server only)</li>
+                        <li>Starts the heartbeat loop for batch processing and cleanup</li>
+                        <li>Configures analytics and security modules</li>
+                    </ol>
+                    
+                    <h2>Examples</h2>
+                    
+                    <h3>Basic Initialization</h3>
+                    <div class="code-block-inline">
+                        <pre><code>local Nexus = require(ReplicatedStorage.Nexus.init)
+local nexus = Nexus.new()
+
+-- Minimal setup
+nexus:Initialize()
+
+-- Advanced setup with options
+nexus:Initialize({
+    remotesFolder = ReplicatedStorage:WaitForChild("MyRemotes"),
+    debug = game:GetService("RunService"):IsStudio(),
+    profile = true
+})</code></pre>
+                    </div>
+                    
+                    <h3>Server-Specific Initialization</h3>
+                    <div class="code-block-inline">
+                        <pre><code>-- ServerScriptService: Init.server.lua
+local Nexus = require(ReplicatedStorage.Nexus.init)
+
+local nexus = Nexus.new({
+    security = {
+        enforceRateLimits = true,
+        autoBanThreshold = 5
+    }
+})
+
+nexus:Initialize({
+    debug = true,
+    profile = true
+})
+
+-- Set up player join/leave handlers
+game:GetService("Players").PlayerAdded:Connect(function(player)
+    nexus.security:InitializePlayer(player)
+    print(\`Player \${player.Name} initialized in Nexus\`)
+end)</code></pre>
+                    </div>
+                    
+                    <h3>Client-Specific Initialization</h3>
+                    <div class="code-block-inline">
+                        <pre><code>-- LocalScript: Client.client.lua
+local Nexus = require(ReplicatedStorage.Nexus.init)
+
+local nexus = Nexus.new({
+    performance = {
+        useMemoryPool = true
+    }
+})
+
+nexus:Initialize({
+    debug = false  -- Disable debug on client for performance
+})
+
+-- Client is now ready to use Nexus remotes</code></pre>
+                    </div>
+                    
+                    <h2>Error Cases</h2>
+                    
+                    <div class="info-box error">
+                        <div class="info-box-icon">
+                            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>
+                        </div>
+                        <div class="info-box-content">
+                            <p><strong>Common Error:</strong> Calling other Nexus methods before <code class="inline-code">Initialize()</code> will throw an error: "[Nexus] Must call Initialize() first"</p>
+                        </div>
+                    </div>
+                    
+                    <div class="info-box warning">
+                        <div class="info-box-icon">
+                            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                        </div>
+                        <div class="info-box-content">
+                            <p><strong>Performance Tip:</strong> Disable <code class="inline-code">debug</code> mode in production for better performance. Only enable <code class="inline-code">profile</code> when actively debugging performance issues.</p>
+                        </div>
+                    </div>
+                    
+                    <h2>Advanced Configuration</h2>
+                    <p>You can combine <code class="inline-code">Initialize</code> with other configuration methods:</p>
+                    
+                    <div class="code-block-inline">
+                        <pre><code>-- Comprehensive setup
+local nexus = Nexus.new({
+    security = {
+        validateSignatures = true,
+        packetTTL = 15
+    }
+})
+
+nexus:Initialize({
+    debug = true
+})
+
+-- Set up custom middleware
+nexus:UseMiddleware("auth", function(context)
+    -- Custom authentication logic
+    return true
+end)
+
+-- Register remotes after initialization
+nexus:RegisterRemote("SecureAction", "Function", {
+    middleware = {"auth"},
+    schema = {"string", "number"}
+})</code></pre>
+                    </div>
+                </div>
+            `;
+        }
+    }
 };
 
 // Code examples for the code panel
@@ -834,7 +1025,282 @@ class GameClient {
     }
 }`
     },
-    // More code examples for other pages...
+    architecture: {
+        lua: `-- Architecture example showing module interaction
+local Nexus = require(ReplicatedStorage.Nexus.init)
+local Serializer = require(ReplicatedStorage.Nexus.serializer)
+local Validator = require(ReplicatedStorage.Nexus.validator)
+
+-- Create instances
+local nexus = Nexus.new()
+local serializer = Serializer.new()
+local validator = Validator.new()
+
+-- Initialize Nexus
+nexus:Initialize()
+
+-- Example of module interaction
+local data = {
+    playerId = 123,
+    position = Vector3.new(10, 20, 30),
+    inventory = {"sword", "shield", "potion"}
+}
+
+-- Validate data
+local valid, error = validator:Validate(data, {
+    playerId = "number",
+    position = "Vector3",
+    inventory = {"string"}
+})
+
+if valid then
+    -- Serialize data
+    local serialized = serializer:Serialize(data, {
+        compress = true,
+        strategy = "json"
+    })
+    
+    print("Data serialized:", #serialized, "bytes")
+    
+    -- Send via Nexus
+    nexus:Fire("PlayerUpdate", serialized)
+else
+    warn("Validation failed:", error)
+end`,
+        typescript: `// Architecture type example
+interface NexusArchitecture {
+    core: {
+        nexusRemote: any;
+        initialized: boolean;
+    };
+    modules: {
+        serializer: any;
+        validator: any;
+        security: any;
+        rateLimiter: any;
+        analytics: any;
+        promise: any;
+        memoryPool: any;
+        circuitBreaker: any;
+        profiler: any;
+    };
+    config: {
+        security: SecurityConfig;
+        performance: PerformanceConfig;
+        debug: boolean;
+    };
+}
+
+interface SecurityConfig {
+    enforceRateLimits: boolean;
+    validateSignatures: boolean;
+    packetTTL: number;
+    threatDetection: boolean;
+}
+
+interface PerformanceConfig {
+    batchInterval: number;
+    maxBatchSize: number;
+    useMemoryPool: boolean;
+    compressionThreshold: number;
+}`
+    },
+    nexusremote: {
+        lua: `-- NexusRemote usage examples
+local Nexus = require(ReplicatedStorage.Nexus.init)
+
+-- Create instance with configuration
+local nexus = Nexus.new({
+    security = {
+        enforceRateLimits = true,
+        validateSignatures = true,
+        packetTTL = 10
+    },
+    performance = {
+        batchInterval = 0.1,
+        maxBatchSize = 50
+    }
+})
+
+-- Initialize
+nexus:Initialize({
+    debug = true
+})
+
+-- Example 1: Register and use an event
+nexus:RegisterRemote("PlayerChat", "Event", {
+    rateLimit = { client = 10, server = 100, window = 1 },
+    schema = { "string", "number" }
+})
+
+nexus:On("PlayerChat", function(player, message, timestamp)
+    print(\`\${player.Name}: \${message} (\${timestamp})\`)
+    
+    -- Broadcast to other players
+    for _, otherPlayer in pairs(game:GetService("Players"):GetPlayers()) do
+        if otherPlayer ~= player then
+            nexus:FireClient("ChatMessage", otherPlayer, player.Name, message)
+        end
+    end
+end)
+
+-- Example 2: Register and use a function
+nexus:RegisterRemote("GetPlayerData", "Function", {
+    schema = { "string" },
+    timeout = 5
+})
+
+nexus:On("GetPlayerData", function(player, dataType)
+    if dataType == "inventory" then
+        return {
+            success = true,
+            data = {
+                gold = 100,
+                items = {"sword", "shield", "potion"}
+            }
+        }
+    elseif dataType == "stats" then
+        return {
+            success = true,
+            data = {
+                level = 10,
+                experience = 4500,
+                health = 100
+            }
+        }
+    else
+        return {
+            success = false,
+            error = "Unknown data type",
+            code = "INVALID_TYPE"
+        }
+    end
+end)`,
+        typescript: `// TypeScript interface for NexusRemote
+interface NexusRemote {
+    new(config?: RemoteConfig): NexusRemote;
+    
+    // Initialization
+    Initialize(options: InitOptions): NexusRemote;
+    
+    // Remote management
+    RegisterRemote(name: string, type: "Event" | "Function", config?: RemoteConfig): NexusRemote;
+    On(name: string, handler: Function, options?: HandlerOptions): NexusRemote;
+    
+    // Communication
+    Fire(name: string, ...args: any[]): boolean;
+    FireClient(name: string, player: Player, ...args: any[]): boolean;
+    FireAllClients(name: string, ...args: any[]): boolean;
+    Invoke(name: string, ...args: any[]): any;
+    InvokeClient(name: string, player: Player, ...args: any[]): any;
+    
+    // Configuration
+    SetRateLimit(name: string, clientLimit?: number, serverLimit?: number, window?: number): NexusRemote;
+    SetSchema(name: string, schema: Schema): NexusRemote;
+    EnableBatching(name: string, interval: number, maxSize?: number): NexusRemote;
+    
+    // Utilities
+    GetMetrics(name?: string, detailed?: boolean): Metrics;
+    GetSecurityReport(options?: SecurityReportOptions): SecurityReport;
+    Destroy(): void;
+}`
+    },
+    initialization: {
+        lua: `-- Initialization examples
+local Nexus = require(ReplicatedStorage.Nexus.init)
+
+-- Example 1: Basic initialization
+local nexus1 = Nexus.new()
+nexus1:Initialize()  -- Uses defaults
+
+-- Example 2: Server initialization with custom folder
+local nexus2 = Nexus.new({
+    security = {
+        autoBanThreshold = 10,
+        threatDetection = true
+    }
+})
+
+nexus2:Initialize({
+    remotesFolder = Instance.new("Folder"),
+    debug = true,
+    profile = true
+})
+
+-- Example 3: Client initialization
+local nexus3 = Nexus.new({
+    performance = {
+        useMemoryPool = true,
+        compressionThreshold = 256
+    }
+})
+
+nexus3:Initialize({
+    debug = false  -- Disable debug on client
+})
+
+-- Example 4: Error handling during initialization
+local success, error = pcall(function()
+    local nexus4 = Nexus.new()
+    nexus4:Initialize({
+        remotesFolder = "invalid"  -- This will cause an error
+    })
+end)
+
+if not success then
+    warn("Initialization failed:", error)
+end
+
+-- Example 5: Re-initialization protection
+local nexus5 = Nexus.new()
+nexus5:Initialize()
+
+-- Trying to initialize again will warn
+nexus5:Initialize()  -- Prints: "[Nexus] Already initialized"`,
+        typescript: `// TypeScript initialization types
+interface InitOptions {
+    remotesFolder?: Instance;  // Roblox Folder instance
+    debug?: boolean;
+    profile?: boolean;
+}
+
+interface NexusInstance {
+    // Singleton pattern
+    GetInstance(): NexusInstance;
+    IsInitialized(): boolean;
+    
+    // Initialization
+    Initialize(options: InitOptions): NexusInstance;
+    
+    // Configuration getters
+    GetConfig(): RemoteConfig;
+    GetVersion(): string;
+}
+
+// Usage example in TypeScript (conceptual)
+class GameServer {
+    private nexus: NexusInstance;
+    
+    constructor() {
+        this.nexus = Nexus.new();
+        this.setupNexus();
+    }
+    
+    private setupNexus(): void {
+        this.nexus.Initialize({
+            debug: true,
+            profile: true
+        });
+        
+        // Now safe to use other methods
+        this.registerRemotes();
+    }
+    
+    private registerRemotes(): void {
+        // Register remotes here
+    }
+}`
+    }
 };
 
 // Initialize the application
@@ -1117,7 +1583,7 @@ function buildSearchIndex() {
     // Add API methods
     const apiMethods = [
         { id: 'nexusremote', title: 'NexusRemote Class', description: 'Main orchestrator class' },
-        { id: 'initialize', title: 'Initialize Method', description: 'Initialize Nexus with configuration' },
+        { id: 'initialization', title: 'Initialize Method', description: 'Initialize Nexus with configuration' },
         { id: 'register-remote', title: 'RegisterRemote Method', description: 'Register a new remote' },
         { id: 'fire', title: 'Fire Methods', description: 'Send events to server or clients' },
         { id: 'invoke', title: 'Invoke Methods', description: 'Invoke remote functions' }
