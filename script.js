@@ -474,2997 +474,2546 @@ pool:Release("packet", packet)</code></pre>
         `
     },
 
-    // NexusRemote API
-    nexusremote: {
-        title: 'NexusRemote Class',
-        content: `
-            <div class="content-section">
-                <h1>NexusRemote Class</h1>
-                <p class="lead-text">The main orchestrator class that manages all remote communication.</p>
-                
-                <div class="method-badge both">
-                    <span>Class</span>
-                </div>
-                
-                <h2>Constructor</h2>
-                <div class="code-block-inline">
-                    <pre><code>local Nexus = require(ReplicatedStorage.Nexus.init)
-local nexus = Nexus.new(config: RemoteConfig?)</code></pre>
-                </div>
-                
-                <h3>Parameters</h3>
-                <table class="param-table">
-                    <thead>
-                        <tr>
-                            <th>Parameter</th>
-                            <th>Type</th>
-                            <th>Required</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><span class="param-name">config</span></td>
-                            <td><span class="param-type">RemoteConfig?</span></td>
-                            <td><span class="param-required optional">Optional</span></td>
-                            <td class="param-desc">Configuration object for Nexus instance</td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <h3>RemoteConfig Type</h3>
-                <div class="code-block-inline">
-                    <pre><code>type RemoteConfig = {
-    debug: boolean?,
-    security: {
-        enforceRateLimits: boolean?,
-        validateSignatures: boolean?,
-        packetTTL: number?,
-        maxPacketSize: number?,
-        threatDetection: boolean?,
-        autoBanThreshold: number?
-    },
-    performance: {
-        batchInterval: number?,
-        maxBatchSize: number?,
-        compressionThreshold: number?,
-        useMemoryPool: boolean?,
-        poolSize: number?,
-        cleanupInterval: number?
-    }
+    "RegisterRemote": [
+    {
+      "title": "RegisterRemote Method",
+      "content": `
+        <p>The <code>RegisterRemote</code> method creates and configures a new remote (event or function) with enhanced security, rate limiting, and performance options.</p>
+
+        <h3>Syntax</h3>
+        <pre><code>Nexus:RegisterRemote(name: string, remoteType: "Event" | "Function", config: RemoteConfig?)</code></pre>
+
+        <h3>Parameters</h3>
+        <table class="param-table">
+          <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+          <tr><td>name</td><td>string</td><td>Unique identifier for the remote (alphanumeric + underscore only)</td></tr>
+          <tr><td>remoteType</td><td>"Event" | "Function"</td><td>Type of remote communication</td></tr>
+          <tr><td>config</td><td>RemoteConfig (optional)</td><td>Configuration object for the remote</td></tr>
+        </table>
+
+        <h3>RemoteConfig Structure</h3>
+        <pre><code>{
+  rateLimit: {
+    client: number?,    // Calls per window on client side
+    server: number?,    // Calls per window on server side
+    window: number?,    // Time window in seconds
+    adaptive: boolean?  // Use adaptive limiting
+  },
+  schema: Schema?,      // Validation schema
+  middleware: [string]?, // Middleware chain
+  security: {
+    requireAuth: boolean?,
+    requireSignature: boolean?,
+    maxSize: number?,
+    allowedTypes: [string]?,
+    whitelist: [number]?,
+    blacklist: [number]?
+  },
+  performance: {
+    batching: boolean?,
+    batchSize: number?,
+    compression: boolean?,
+    priority: number?,
+    timeout: number?,
+    retryCount: number?
+  }
 }</code></pre>
-                </div>
-                
-                <h2>Static Methods</h2>
-                
-                <h3>GetInstance</h3>
-                <div class="code-block-inline">
-                    <pre><code>local nexus = Nexus.GetInstance()</code></pre>
-                </div>
-                <p>Returns the active Nexus instance (singleton pattern).</p>
-                
-                <h3>IsInitialized</h3>
-                <div class="code-block-inline">
-                    <pre><code>local initialized = Nexus.IsInitialized()</code></pre>
-                </div>
-                <p>Returns <code class="inline-code">true</code> if Nexus has been initialized.</p>
-                
-                <h2>Instance Methods</h2>
-                
-                <h3>Initialize</h3>
-                <div class="code-block-inline">
-                    <pre><code>nexus:Initialize(options: {
-    remotesFolder: Folder?,
-    debug: boolean?,
-    profile: boolean?
-}): NexusRemote</code></pre>
-                </div>
-                <p>Initializes Nexus with the given options. Must be called before using any other methods.</p>
-                
-                <h3>RegisterRemote</h3>
-                <div class="code-block-inline">
-                    <pre><code>nexus:RegisterRemote(name: string, remoteType: "Event" | "Function", config: RemoteConfig?): NexusRemote</code></pre>
-                </div>
-                <p>Registers a new remote with the given name and type.</p>
-                
-                <h3>On</h3>
-                <div class="code-block-inline">
-                    <pre><code>nexus:On(remoteName: string, handler: (player: Player?, ...any) -> any, options: {
-    async: boolean?,
-    timeout: number?
-}?): NexusRemote</code></pre>
-                </div>
-                <p>Sets up a handler for incoming remote calls.</p>
-                
-                <h3>Fire / FireClient / FireAllClients</h3>
-                <div class="code-block-inline">
-                    <pre><code>-- Client to server
-nexus:Fire(remoteName: string, ...any): boolean
 
--- Server to specific client
-nexus:FireClient(remoteName: string, player: Player, ...any): boolean
+        <h3>Example Usage</h3>
+        <pre><code>-- Server-side registration
+local Nexus = require(game.ReplicatedStorage.NexusRemote)
 
--- Server to all clients
-nexus:FireAllClients(remoteName: string, ...any): boolean</code></pre>
-                </div>
-                <p>Sends events to the server or clients.</p>
-                
-                <h3>Invoke / InvokeClient</h3>
-                <div class="code-block-inline">
-                    <pre><code>-- Client to server (returns response)
-local response = nexus:Invoke(remoteName: string, ...any): any
-
--- Server to client (returns response)
-local response = nexus:InvokeClient(remoteName: string, player: Player, ...any): any</code></pre>
-                </div>
-                <p>Invokes remote functions and waits for a response.</p>
-                
-                <h2>Usage Example</h2>
-                <div class="code-block-inline">
-                    <pre><code>-- Complete example
-local Nexus = require(ReplicatedStorage.Nexus.init)
-
--- Create instance
-local nexus = Nexus.new({
-    security = {
-        enforceRateLimits = true,
-        validateSignatures = true,
-        packetTTL = 10
-    }
+-- Basic event with rate limiting
+Nexus:RegisterRemote("PlayerJumped", "Event", {
+  rateLimit = {
+    client = 10,      -- 10 calls per second client-side
+    server = 100,     // 100 calls per second server-side
+    window = 1,       // 1-second window
+    adaptive = true   // Adaptive rate limiting
+  }
 })
 
--- Initialize
-nexus:Initialize({
-    remotesFolder = ReplicatedStorage:WaitForChild("NexusRemotes"),
-    debug = true
-})
-
--- Register remote
-nexus:RegisterRemote("PlayerChat", "Event", {
-    rateLimit = {
-        client = 20,
-        server = 100,
-        window = 1
-    },
-    schema = {
-        "string",  -- message
-        "number"   -- timestamp
-    }
-})
-
--- Set handler
-nexus:On("PlayerChat", function(player, message, timestamp)
-    print(\`\${player.Name} said: \${message} at \${timestamp}\`)
-    -- Broadcast to other players
-    nexus:FireExcept("PlayerChat", player, player.Name, message, timestamp)
-end)</code></pre>
-                </div>
-                
-                <h2>Error Handling</h2>
-                <p>NexusRemote methods return structured error responses:</p>
-                <div class="code-block-inline">
-                    <pre><code>{
-    success: boolean,
-    error: string?,
-    code: string?,
-    timestamp: number,
-    requestId: string?
-}</code></pre>
-                </div>
-                
-                <table class="param-table">
-                    <thead>
-                        <tr>
-                            <th>Error Code</th>
-                            <th>Description</th>
-                            <th>Possible Causes</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><code class="inline-code">RATE_LIMIT</code></td>
-                            <td>Rate limit exceeded</td>
-                            <td>Too many requests in time window</td>
-                        </tr>
-                        <tr>
-                            <td><code class="inline-code">SECURITY_ERROR</code></td>
-                            <td>Security violation</td>
-                            <td>Invalid signature, expired packet</td>
-                        </tr>
-                        <tr>
-                            <td><code class="inline-code">VALIDATION_ERROR</code></td>
-                            <td>Schema validation failed</td>
-                            <td>Wrong data type or structure</td>
-                        </tr>
-                        <tr>
-                            <td><code class="inline-code">TIMEOUT</code></td>
-                            <td>Request timeout</td>
-                            <td>Handler took too long</td>
-                        </tr>
-                        <tr>
-                            <td><code class="inline-code">CIRCUIT_OPEN</code></td>
-                            <td>Circuit breaker open</td>
-                            <td>Too many failures on remote</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        `
-    },
-
-    // Initialize page
-    initialization: {
-        title: 'Initialize Method',
-        content: `
-            <div class="content-section">
-                <h1>Initialize Method</h1>
-                <p class="lead-text">Sets up Nexus with configuration options and prepares it for use.</p>
-                
-                <div class="method-badge both">
-                    <span>Method</span>
-                </div>
-                
-                <h2>Syntax</h2>
-                <div class="code-block-inline">
-                    <pre><code>nexus:Initialize(options: {
-    remotesFolder: Folder?,
-    debug: boolean?,
-    profile: boolean?
-}): NexusRemote</code></pre>
-                </div>
-                
-                <h2>Parameters</h2>
-                <table class="param-table">
-                    <thead>
-                        <tr>
-                            <th>Parameter</th>
-                            <th>Type</th>
-                            <th>Required</th>
-                            <th>Default</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><span class="param-name">remotesFolder</span></td>
-                            <td><span class="param-type">Folder?</span></td>
-                            <td><span class="param-required optional">Optional</span></td>
-                            <td>ReplicatedStorage.NexusRemotes</td>
-                            <td class="param-desc">Folder where remote instances will be created</td>
-                        </tr>
-                        <tr>
-                            <td><span class="param-name">debug</span></td>
-                            <td><span class="param-type">boolean?</span></td>
-                            <td><span class="param-required optional">Optional</span></td>
-                            <td>true in Studio</td>
-                            <td class="param-desc">Enable debug logging and verbose output</td>
-                        </tr>
-                        <tr>
-                            <td><span class="param-name">profile</span></td>
-                            <td><span class="param-type">boolean?</span></td>
-                            <td><span class="param-required optional">Optional</span></td>
-                            <td>false</td>
-                            <td class="param-desc">Enable performance profiling</td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <h2>Returns</h2>
-                <p>Returns the NexusRemote instance for method chaining.</p>
-                
-                <h2>Description</h2>
-                <p>The <code class="inline-code">Initialize</code> method must be called before using any other Nexus methods. It performs the following actions:</p>
-                
-                <ol>
-                    <li>Creates or finds the remotes folder in ReplicatedStorage</li>
-                    <li>Initializes all sub-systems (Serializer, Validator, Security, etc.)</li>
-                    <li>Sets up player connection/disconnection tracking (server only)</li>
-                    <li>Starts the heartbeat loop for batch processing and cleanup</li>
-                    <li>Configures analytics and security modules</li>
-                </ol>
-                
-                <h2>Examples</h2>
-                
-                <h3>Basic Initialization</h3>
-                <div class="code-block-inline">
-                    <pre><code>local Nexus = require(ReplicatedStorage.Nexus.init)
-local nexus = Nexus.new()
-
--- Minimal setup
-nexus:Initialize()
-
--- Advanced setup with options
-nexus:Initialize({
-    remotesFolder = ReplicatedStorage:WaitForChild("MyRemotes"),
-    debug = game:GetService("RunService"):IsStudio(),
-    profile = true
+-- Function with schema validation
+Nexus:RegisterRemote("PurchaseItem", "Function", {
+  schema = {
+    itemId = "string",
+    quantity = "number",
+    currency = "string"
+  },
+  performance = {
+    timeout = 5,      // 5-second timeout
+    retryCount = 2    // 2 retry attempts
+  }
 })</code></pre>
-                </div>
-                
-                <h3>Server-Specific Initialization</h3>
-                <div class="code-block-inline">
-                    <pre><code>-- ServerScriptService: Init.server.lua
-local Nexus = require(ReplicatedStorage.Nexus.init)
 
-local nexus = Nexus.new({
-    security = {
-        enforceRateLimits = true,
-        autoBanThreshold = 5
+        <h3>Best Practices</h3>
+        <ul>
+          <li>Use descriptive, camelCase names for remotes</li>
+          <li>Always set appropriate rate limits based on expected usage</li>
+          <li>Use schemas for all remote functions to prevent exploits</li>
+          <li>Consider adaptive rate limiting for public-facing remotes</li>
+          <li>Set reasonable timeouts for all remote functions</li>
+        </ul>
+      `
+    },
+    {
+      "title": "Remote Types",
+      "content": `
+        <h3>RemoteEvent vs RemoteFunction</h3>
+        <table class="comparison-table">
+          <tr><th>Aspect</th><th>RemoteEvent</th><th>RemoteFunction</th></tr>
+          <tr><td>Communication</td><td>One-way (fire and forget)</td><td>Two-way (request-response)</td></tr>
+          <tr><td>Return Value</td><td>None</td><td>Returns data to caller</td></tr>
+          <tr><td>Use Case</td><td>Notifications, updates</td><td>Data fetching, transactions</td></tr>
+          <tr><td>Performance</td><td>Faster (async)</td><td>Slower (sync)</td></tr>
+          <tr><td>Guarantee</td><td>Best-effort delivery</td><td>Guaranteed response</td></tr>
+        </table>
+
+        <h3>Choosing the Right Type</h3>
+        <p><strong>Use RemoteEvent when:</strong></p>
+        <ul>
+          <li>You don't need a response</li>
+          <li>Performance is critical</li>
+          <li>You're broadcasting to multiple clients</li>
+          <li>The action is idempotent (can be repeated safely)</li>
+        </ul>
+
+        <p><strong>Use RemoteFunction when:</strong></p>
+        <ul>
+          <li>You need data back from the server/client</li>
+          <li>You're performing transactions (purchases, saves)</li>
+          <li>You need guaranteed execution</li>
+          <li>You're fetching dynamic data</li>
+        </ul>
+      `
     }
-})
+  ],
 
-nexus:Initialize({
-    debug = true,
-    profile = true
-})
+  "Event Handlers": [
+    {
+      "title": "On Method - Event Handlers",
+      "content": `
+        <p>The <code>On</code> method registers a handler function for incoming remote events or function invocations with enhanced security and error handling.</p>
 
--- Set up player join/leave handlers
-game:GetService("Players").PlayerAdded:Connect(function(player)
-    nexus.security:InitializePlayer(player)
-    print(\`Player \${player.Name} initialized in Nexus\`)
-end)</code></pre>
-                </div>
-                
-                <h3>Client-Specific Initialization</h3>
-                <div class="code-block-inline">
-                    <pre><code>-- LocalScript: Client.client.lua
-local Nexus = require(ReplicatedStorage.Nexus.init)
+        <h3>Syntax</h3>
+        <pre><code>Nexus:On(remoteName: string, handler: (player: Player?, ...any) -> any, options: {async: boolean?, timeout: number?}?)</code></pre>
 
-local nexus = Nexus.new({
-    performance = {
-        useMemoryPool = true
-    }
-})
+        <h3>Parameters</h3>
+        <table class="param-table">
+          <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+          <tr><td>remoteName</td><td>string</td><td>Name of the registered remote</td></tr>
+          <tr><td>handler</td><td>function</td><td>Function to execute when remote is triggered</td></tr>
+          <tr><td>options</td><td>table (optional)</td><td>Handler configuration options</td></tr>
+        </table>
 
-nexus:Initialize({
-    debug = false  -- Disable debug on client for performance
-})
+        <h3>Handler Function Signature</h3>
+        <pre><code>function handler(player: Player?, ...args: any): any
+  -- Server-side: player is the Player who triggered the remote
+  -- Client-side: player is nil
+  -- Return value is only used for RemoteFunctions
+end</code></pre>
 
--- Client is now ready to use Nexus remotes</code></pre>
-                </div>
-                
-                <h2>Error Cases</h2>
-                
-                <div class="info-box error">
-                    <div class="info-box-icon">
-                        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>
-                    </div>
-                    <div class="info-box-content">
-                        <p><strong>Common Error:</strong> Calling other Nexus methods before <code class="inline-code">Initialize()</code> will throw an error: "[Nexus] Must call Initialize() first"</p>
-                    </div>
-                </div>
-                
-                <div class="info-box warning">
-                    <div class="info-box-icon">
-                        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
-                    </div>
-                    <div class="info-box-content">
-                        <p><strong>Performance Tip:</strong> Disable <code class="inline-code">debug</code> mode in production for better performance. Only enable <code class="inline-code">profile</code> when actively debugging performance issues.</p>
-                    </div>
-                </div>
-                
-                <h2>Advanced Configuration</h2>
-                <p>You can combine <code class="inline-code">Initialize</code> with other configuration methods:</p>
-                
-                <div class="code-block-inline">
-                    <pre><code>-- Comprehensive setup
-local nexus = Nexus.new({
-    security = {
-        validateSignatures = true,
-        packetTTL = 15
-    }
-})
+        <h3>Options</h3>
+        <table class="param-table">
+          <tr><th>Option</th><th>Type</th><th>Default</th><th>Description</th></tr>
+          <tr><td>async</td><td>boolean</td><td>false</td><td>Run handler asynchronously (fire and forget)</td></tr>
+          <tr><td>timeout</td><td>number</td><td>10</td><td>Timeout in seconds for function handlers</td></tr>
+        </table>
 
-nexus:Initialize({
-    debug = true
-})
-
--- Set up custom middleware
-nexus:UseMiddleware("auth", function(context)
-    -- Custom authentication logic
-    return true
+        <h3>Example Usage</h3>
+        <pre><code>-- Server-side event handler
+Nexus:On("PlayerJumped", function(player, height, velocity)
+  -- Log the jump for analytics
+  Analytics:RecordJump(player, height, velocity)
+  
+  -- Update server state
+  PlayerStates[player].lastJump = os.clock()
+  
+  -- Broadcast to other players (async)
+  Nexus:FireAllClients("PlayerJumped", player.UserId, height)
 end)
 
--- Register remotes after initialization
-nexus:RegisterRemote("SecureAction", "Function", {
-    middleware = {"auth"},
-    schema = {"string", "number"}
-})</code></pre>
-                </div>
-            </div>
-        `
-    },
-
-    // RegisterRemote page
-    'register-remote': {
-        title: 'RegisterRemote Method',
-        content: `
-            <div class="content-section">
-                <h1>RegisterRemote Method</h1>
-                <p class="lead-text">Registers a new remote event or function with Nexus.</p>
-                
-                <div class="method-badge both">
-                    <span>Method</span>
-                </div>
-                
-                <h2>Syntax</h2>
-                <div class="code-block-inline">
-                    <pre><code>nexus:RegisterRemote(name: string, remoteType: "Event" | "Function", config: RemoteConfig?): NexusRemote</code></pre>
-                </div>
-                
-                <h2>Parameters</h2>
-                <table class="param-table">
-                    <thead>
-                        <tr>
-                            <th>Parameter</th>
-                            <th>Type</th>
-                            <th>Required</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><span class="param-name">name</span></td>
-                            <td><span class="param-type">string</span></td>
-                            <td><span class="param-required required">Required</span></td>
-                            <td class="param-desc">Unique name for the remote</td>
-                        </tr>
-                        <tr>
-                            <td><span class="param-name">remoteType</span></td>
-                            <td><span class="param-type">"Event" | "Function"</span></td>
-                            <td><span class="param-required required">Required</span></td>
-                            <td class="param-desc">Type of remote to create</td>
-                        </tr>
-                        <tr>
-                            <td><span class="param-name">config</span></td>
-                            <td><span class="param-type">RemoteConfig?</span></td>
-                            <td><span class="param-required optional">Optional</span></td>
-                            <td class="param-desc">Configuration for the remote</td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <h2>RemoteConfig Options</h2>
-                <div class="code-block-inline">
-                    <pre><code>type RemoteConfig = {
-    rateLimit: {
-        client: number?,      -- Calls per window (client-side)
-        server: number?,      -- Calls per window (server-side)
-        window: number?,      -- Time window in seconds
-        adaptive: boolean?    -- Adaptive rate limiting
-    },
-    schema: Schema?,          -- Validation schema
-    middleware: {string}?,    -- Middleware chain
-    timeout: number?,         -- Timeout in seconds
-    security: {
-        requireAuth: boolean?,
-        requireSignature: boolean?,
-        maxSize: number?
-    }
-}</code></pre>
-                </div>
-                
-                <h2>Examples</h2>
-                
-                <h3>Simple Event Registration</h3>
-                <div class="code-block-inline">
-                    <pre><code>nexus:RegisterRemote("PlayerChat", "Event", {
-    rateLimit = {
-        client = 10,   -- 10 calls per window
-        server = 100,  -- 100 calls per window
-        window = 1     -- 1 second window
-    },
-    schema = {
-        "string",      -- message
-        "number"       -- timestamp
-    }
-})</code></pre>
-                </div>
-                
-                <h3>Function with Schema</h3>
-                <div class="code-block-inline">
-                    <pre><code>nexus:RegisterRemote("GetPlayerData", "Function", {
-    schema = {
-        playerId = "number",
-        dataType = "string"
-    },
-    timeout = 5,
-    middleware = {"auth", "logging"}
-})</code></pre>
-                </div>
-                
-                <h3>Complex Schema Example</h3>
-                <div class="code-block-inline">
-                    <pre><code>nexus:RegisterRemote("UpdateInventory", "Event", {
-    schema = {
-        items = {"table", {
-            id = "number",
-            count = "number",
-            metadata = {"table", {
-                rarity = "string",
-                durability = "number?"
-            }}
-        }},
-        timestamp = "number",
-        source = "string"
-    },
-    rateLimit = {
-        client = 5,
-        server = 50,
-        window = 2,
-        adaptive = true
-    }
-})</code></pre>
-                </div>
-                
-                <h2>Schema Types</h2>
-                <p>Nexus supports the following schema types:</p>
-                
-                <table class="param-table">
-                    <thead>
-                        <tr>
-                            <th>Type</th>
-                            <th>Description</th>
-                            <th>Example</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><code>"string"</code></td>
-                            <td>String value</td>
-                            <td><code>"Hello"</code></td>
-                        </tr>
-                        <tr>
-                            <td><code>"number"</code></td>
-                            <td>Numeric value</td>
-                            <td><code>42</code></td>
-                        </tr>
-                        <tr>
-                            <td><code>"boolean"</code></td>
-                            <td>Boolean value</td>
-                            <td><code>true</code></td>
-                        </tr>
-                        <tr>
-                            <td><code>"table"</code></td>
-                            <td>Lua table</td>
-                            <td><code>{}</code></td>
-                        </tr>
-                        <tr>
-                            <td><code>"Vector3"</code></td>
-                            <td>Roblox Vector3</td>
-                            <td><code>Vector3.new(0, 0, 0)</code></td>
-                        </tr>
-                        <tr>
-                            <td><code>"CFrame"</code></td>
-                            <td>Roblox CFrame</td>
-                            <td><code>CFrame.new()</code></td>
-                        </tr>
-                        <tr>
-                            <td><code>"Instance"</code></td>
-                            <td>Roblox Instance</td>
-                            <td><code>workspace.Part</code></td>
-                        </tr>
-                        <tr>
-                            <td><code>{"type"}</code></td>
-                            <td>Array of type</td>
-                            <td><code>{"string"}</code> for string array</td>
-                        </tr>
-                        <tr>
-                            <td><code>{key = "type"}</code></td>
-                            <td>Dictionary schema</td>
-                            <td><code>{x = "number", y = "number"}</code></td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <div class="info-box info">
-                    <div class="info-box-icon">
-                        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
-                    </div>
-                    <div class="info-box-content">
-                        <p><strong>Note:</strong> Remote names must be unique. Registering a remote with the same name will overwrite the previous registration.</p>
-                    </div>
-                </div>
-            </div>
-        `
-    },
-
-    // Event Handlers page
-    handlers: {
-        title: 'Event Handlers',
-        content: `
-            <div class="content-section">
-                <h1>Event Handlers</h1>
-                <p class="lead-text">Learn how to set up handlers for incoming remote calls with proper error handling and async support.</p>
-                
-                <div class="method-badge both">
-                    <span>Method</span>
-                </div>
-                
-                <h2>Syntax</h2>
-                <div class="code-block-inline">
-                    <pre><code>nexus:On(remoteName: string, handler: (player: Player?, ...any) -> any, options: {
-    async: boolean?,
-    timeout: number?
-}?): NexusRemote</code></pre>
-                </div>
-                
-                <h2>Parameters</h2>
-                <table class="param-table">
-                    <thead>
-                        <tr>
-                            <th>Parameter</th>
-                            <th>Type</th>
-                            <th>Required</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><span class="param-name">remoteName</span></td>
-                            <td><span class="param-type">string</span></td>
-                            <td><span class="param-required required">Required</span></td>
-                            <td class="param-desc">Name of the remote to handle</td>
-                        </tr>
-                        <tr>
-                            <td><span class="param-name">handler</span></td>
-                            <td><span class="param-type">function</span></td>
-                            <td><span class="param-required required">Required</span></td>
-                            <td class="param-desc">Function to handle incoming calls</td>
-                        </tr>
-                        <tr>
-                            <td><span class="param-name">options</span></td>
-                            <td><span class="param-type">table?</span></td>
-                            <td><span class="param-required optional">Optional</span></td>
-                            <td class="param-desc">Handler configuration options</td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <h2>Handler Function Signature</h2>
-                <div class="code-block-inline">
-                    <pre><code>-- Server-side handler
-function handler(player: Player, ...args: any): any
-
--- Client-side handler  
-function handler(...args: any): any</code></pre>
-                </div>
-                
-                <h2>Examples</h2>
-                
-                <h3>Basic Event Handler</h3>
-                <div class="code-block-inline">
-                    <pre><code>-- Register remote first
-nexus:RegisterRemote("PlayerChat", "Event", {
-    schema = {"string", "number"}
-})
-
--- Set up handler
-nexus:On("PlayerChat", function(player, message, timestamp)
-    print(\`\${player.Name}: \${message} (\${timestamp})\`)
-    
-    -- Broadcast to other players
-    nexus:FireExcept("ChatMessage", player, player.Name, message)
-end)</code></pre>
-                </div>
-                
-                <h3>Function Handler with Return Value</h3>
-                <div class="code-block-inline">
-                    <pre><code>nexus:RegisterRemote("GetPlayerStats", "Function", {
-    schema = {"string"}
-})
-
-nexus:On("GetPlayerStats", function(player, statType)
-    local stats = {
-        health = 100,
-        level = 10,
-        experience = 4500
-    }
-    
-    return {
-        success = true,
-        data = stats[statType] or 0,
-        timestamp = os.time()
-    }
-end)</code></pre>
-                </div>
-                
-                <h3>Async Handler with Timeout</h3>
-                <div class="code-block-inline">
-                    <pre><code>nexus:On("ProcessData", function(player, data)
-    -- Process data asynchronously
-    local result = processDataAsync(data)
-    return result
-end, {
-    async = true,
-    timeout = 10  -- 10 second timeout
-})</code></pre>
-                </div>
-                
-                <h3>Error Handling in Handlers</h3>
-                <div class="code-block-inline">
-                    <pre><code>nexus:On("PurchaseItem", function(player, itemId, quantity)
-    -- Validate input
-    if quantity <= 0 then
-        return {
-            success = false,
-            error = "Invalid quantity",
-            code = "INVALID_QUANTITY"
-        }
-    end
-    
-    -- Check if player can afford
-    local playerData = getPlayerData(player)
-    local itemPrice = getItemPrice(itemId) * quantity
-    
-    if playerData.money < itemPrice then
-        return {
-            success = false,
-            error = "Insufficient funds",
-            code = "INSUFFICIENT_FUNDS"
-        }
-    end
-    
-    -- Process purchase
-    playerData.money = playerData.money - itemPrice
-    addItemToInventory(player, itemId, quantity)
-    
-    return {
-        success = true,
-        newBalance = playerData.money,
-        purchased = {itemId, quantity}
-    }
-end)</code></pre>
-                </div>
-                
-                <h2>Best Practices</h2>
-                
-                <h3>1. Validate Inputs</h3>
-                <p>Always validate inputs in your handlers, even with schema validation:</p>
-                <div class="code-block-inline">
-                    <pre><code>nexus:On("UpdatePosition", function(player, position)
-    -- Additional validation beyond schema
-    if not position or typeof(position) ~= "Vector3" then
-        return {success = false, error = "Invalid position"}
-    end
-    
-    if position.Magnitude > 1000 then
-        return {success = false, error = "Position out of bounds"}
-    end
-    
-    -- Process valid position
-    player.Character.HumanoidRootPart.Position = position
-    return {success = true}
-end)</code></pre>
-                </div>
-                
-                <h3>2. Use Structured Responses</h3>
-                <p>Always return structured responses for functions:</p>
-                <div class="code-block-inline">
-                    <pre><code>return {
+-- Server-side function handler (with schema)
+Nexus:On("PurchaseItem", function(player, itemId, quantity)
+  -- Validate purchase
+  local success, item = Inventory:CanPurchase(player, itemId, quantity)
+  
+  if not success then
+    return {success = false, error = "Cannot purchase item"}
+  end
+  
+  -- Process transaction
+  Inventory:AddItem(player, itemId, quantity)
+  Economy:ChargePlayer(player, item.price * quantity)
+  
+  return {
     success = true,
-    data = result,
-    metadata = {
-        processedAt = os.time(),
-        version = "1.0"
-    }
-}
+    item = item,
+    newBalance = Economy:GetBalance(player)
+  }
+end, {timeout = 5})  -- 5-second timeout
 
--- Or for errors:
-return {
-    success = false,
-    error = "Error message",
-    code = "ERROR_CODE",
-    timestamp = os.time()
-}</code></pre>
-                </div>
-                
-                <h3>3. Handle Async Operations Properly</h3>
-                <div class="code-block-inline">
-                    <pre><code>nexus:On("SaveGame", function(player)
-    -- Use spawn for async operations
-    task.spawn(function()
-        local success = savePlayerDataAsync(player)
-        if success then
-            nexus:FireClient("SaveComplete", player, true)
-        else
-            nexus:FireClient("SaveComplete", player, false, "Save failed")
-        end
-    end)
-    
-    return {success = true, message = "Save started"}
+-- Client-side event handler
+Nexus:On("PlayerJoined", function(playerName, playerId)
+  -- Update UI
+  UI.Notifications:Show(playerName .. " joined the game!")
+  
+  -- Update player list
+  PlayerList:AddPlayer(playerId, playerName)
+end)
+
+-- Async handler for non-critical operations
+Nexus:On("AnalyticsEvent", function(player, category, data)
+  -- Send to analytics service (fire and forget)
+  AnalyticsService:Track(category, data, player.UserId)
 end, {async = true})</code></pre>
-                </div>
-                
-                <div class="info-box warning">
-                    <div class="info-box-icon">
-                        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
-                    </div>
-                    <div class="info-box-content">
-                        <p><strong>Important:</strong> Always use <code>task.spawn()</code> for long-running operations in async handlers to prevent blocking the main thread.</p>
-                    </div>
-                </div>
-            </div>
-        `
-    },
 
-    // Fire Events page
-    fire: {
-        title: 'Fire Events',
-        content: `
-            <div class="content-section">
-                <h1>Fire Events</h1>
-                <p class="lead-text">Learn how to send events between client and server using Nexus.</p>
-                
-                <h2>Available Methods</h2>
-                
-                <div class="method-badge client">
-                    <span>Client → Server</span>
-                </div>
-                <div class="code-block-inline">
-                    <pre><code>nexus:Fire(remoteName: string, ...any): boolean</code></pre>
-                </div>
-                
-                <div class="method-badge server">
-                    <span>Server → Client</span>
-                </div>
-                <div class="code-block-inline">
-                    <pre><code>nexus:FireClient(remoteName: string, player: Player, ...any): boolean</code></pre>
-                </div>
-                
-                <div class="method-badge server">
-                    <span>Server → All Clients</span>
-                </div>
-                <div class="code-block-inline">
-                    <pre><code>nexus:FireAllClients(remoteName: string, ...any): boolean</code></pre>
-                </div>
-                
-                <div class="method-badge server">
-                    <span>Server → All Except One</span>
-                </div>
-                <div class="code-block-inline">
-                    <pre><code>nexus:FireExcept(remoteName: string, exceptPlayer: Player, ...any): boolean</code></pre>
-                </div>
-                
-                <h2>Examples</h2>
-                
-                <h3>Client to Server</h3>
-                <div class="code-block-inline">
-                    <pre><code>-- Client: Send player action
-local nexus = require(ReplicatedStorage.Nexus.init).GetInstance()
-
--- Simple event
-nexus:Fire("PlayerJumped", os.time())
-
--- With multiple arguments
-nexus:Fire("PlayerChat", "Hello everyone!", os.time(), "general")
-
--- With structured data
-nexus:Fire("PlayerUpdate", {
-    position = game.Players.LocalPlayer.Character.HumanoidRootPart.Position,
-    health = 100,
-    stamina = 75
-})</code></pre>
-                </div>
-                
-                <h3>Server to Specific Client</h3>
-                <div class="code-block-inline">
-                    <pre><code>-- Server: Send private message to player
-nexus:FireClient("PrivateMessage", player, "Welcome to the game!")
-
--- Send player their stats
-nexus:FireClient("PlayerStats", player, {
-    health = 100,
-    level = 10,
-    experience = 4500,
-    inventory = {"sword", "shield", "potion"}
-})
-
--- Notify player of achievement
-nexus:FireClient("AchievementUnlocked", player, 
-    "First Kill", 
-    "Killed your first enemy",
-    100  -- XP reward
-)</code></pre>
-                </div>
-                
-                <h3>Server to All Clients</h3>
-                <div class="code-block-inline">
-                    <pre><code>-- Broadcast game state update
-nexus:FireAllClients("GameStateUpdate", {
-    time = game:GetService("Lighting").ClockTime,
-    weather = "sunny",
-    gamePhase = "playing",
-    playersAlive = #game:GetService("Players"):GetPlayers()
-})
-
--- Announcement to all players
-nexus:FireAllClients("Announcement", 
-    "Server Maintenance", 
-    "Server will restart in 5 minutes for maintenance.",
-    os.time() + 300  -- 5 minutes from now
-)
-
--- Global event
-nexus:FireAllClients("GlobalEvent", "earthquake", {
-    intensity = 7.5,
-    duration = 10,
-    affectedZones = {"zone1", "zone2"}
-})</code></pre>
-                </div>
-                
-                <h3>Server to All Except One</h3>
-                <div class="code-block-inline">
-                    <pre><code>-- Broadcast chat message to everyone except sender
-nexus:On("PlayerChat", function(player, message)
-    -- Send to all players except the one who sent it
-    nexus:FireExcept("ChatMessage", player, player.Name, message, os.time())
-end)
-
--- Player joined - notify others
-game:GetService("Players").PlayerAdded:Connect(function(player)
-    task.wait(1)  -- Wait for player to load
-    
-    -- Notify existing players about new player
-    nexus:FireExcept("PlayerJoined", player, player.Name, player.UserId)
-    
-    -- Send existing players to new player
-    for _, otherPlayer in pairs(game:GetService("Players"):GetPlayers()) do
-        if otherPlayer ~= player then
-            nexus:FireClient("PlayerOnline", player, otherPlayer.Name, otherPlayer.UserId)
-        end
-    end
-end)</code></pre>
-                </div>
-                
-                <h2>Error Handling</h2>
-                <p>Fire methods return a boolean indicating success:</p>
-                
-                <div class="code-block-inline">
-                    <pre><code>-- Check if fire was successful
-local success = nexus:Fire("PlayerAction", "jump")
-
-if not success then
-    warn("Failed to send PlayerAction event")
-    -- Handle failure (rate limit, security violation, etc.)
-end
-
--- With rate limit checking
-local function safeFire(remoteName, ...)
-    local success = nexus:Fire(remoteName, ...)
-    
-    if not success then
-        -- Log the failure
-        warn(\`Failed to fire \${remoteName}\`)
-        
-        -- Optionally retry
-        task.wait(0.1)
-        return nexus:Fire(remoteName, ...)
-    end
-    
-    return true
-end
-
--- Usage
-safeFire("ImportantUpdate", data)</code></pre>
-                </div>
-                
-                <h2>Performance Tips</h2>
-                
-                <h3>1. Batch Similar Events</h3>
-                <div class="code-block-inline">
-                    <pre><code>-- Instead of sending multiple position updates:
-for i = 1, 10 do
-    nexus:Fire("PositionUpdate", player, position)
-end
-
--- Batch them:
-nexus:EnableBatching("PositionUpdate", 0.1, 50)
-nexus:Fire("PositionUpdate", player, position)
--- Multiple fires will be batched and sent together</code></pre>
-                </div>
-                
-                <h3>2. Use Compression for Large Data</h3>
-                <div class="code-block-inline">
-                    <pre><code>-- Large data sets should be compressed
-local largeData = {
-    -- ... large table
-}
-
-nexus:Fire("LargeUpdate", nexus.serializer:Compress(largeData))</code></pre>
-                </div>
-                
-                <h3>3. Prioritize Critical Events</h3>
-                <div class="code-block-inline">
-                    <pre><code>-- Register with priority
-nexus:RegisterRemote("CriticalEvent", "Event", {
-    performance = {
-        priority = 10  -- Higher priority = processed first
-    }
-})
-
--- Normal priority events
-nexus:RegisterRemote("NormalEvent", "Event", {
-    performance = {
-        priority = 5  -- Default priority
-    }
-})</code></pre>
-                </div>
-                
-                <div class="info-box info">
-                    <div class="info-box-icon">
-                        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
-                    </div>
-                    <div class="info-box-content">
-                        <p><strong>Tip:</strong> Events are fire-and-forget. For guaranteed delivery, use functions with return confirmation.</p>
-                    </div>
-                </div>
-            </div>
-        `
-    },
-
-    // Invoke Functions page
-    invoke: {
-        title: 'Invoke Functions',
-        content: `
-            <div class="content-section">
-                <h1>Invoke Functions</h1>
-                <p class="lead-text">Learn how to invoke remote functions and handle responses with Nexus.</p>
-                
-                <h2>Available Methods</h2>
-                
-                <div class="method-badge client">
-                    <span>Client → Server</span>
-                </div>
-                <div class="code-block-inline">
-                    <pre><code>local response = nexus:Invoke(remoteName: string, ...any): any</code></pre>
-                </div>
-                
-                <div class="method-badge server">
-                    <span>Server → Client</span>
-                </div>
-                <div class="code-block-inline">
-                    <pre><code>local response = nexus:InvokeClient(remoteName: string, player: Player, ...any): any</code></pre>
-                </div>
-                
-                <div class="method-badge both">
-                    <span>Async Invocation</span>
-                </div>
-                <div class="code-block-inline">
-                    <pre><code>local promise = nexus:InvokeAsync(remoteName: string, ...any): Promise</code></pre>
-                </div>
-                
-                <h2>Examples</h2>
-                
-                <h3>Basic Invoke (Client to Server)</h3>
-                <div class="code-block-inline">
-                    <pre><code>-- Client: Request player data
-local result = nexus:Invoke("GetPlayerData", "inventory")
-
-if result.success then
-    print("Inventory:", result.data)
-else
-    warn("Failed:", result.error)
-end
-
--- With multiple arguments
-local stats = nexus:Invoke("GetPlayerStats", "health", "level", "experience")
-
--- With timeout handling
-local function safeInvoke(remoteName, ...)
-    local success, result = pcall(function()
-        return nexus:Invoke(remoteName, ...)
-    end)
-    
-    if not success then
-        warn(\`Invoke failed for \${remoteName}: \${result}\`)
-        return {success = false, error = "Invocation failed"}
-    end
-    
-    return result
-end
-
-local data = safeInvoke("GetData", "key")</code></pre>
-                </div>
-                
-                <h3>Server to Client Invocation</h3>
-                <div class="code-block-inline">
-                    <pre><code>-- Server: Request data from client
-local clientData = nexus:InvokeClient("GetClientInfo", player)
-
-if clientData.success then
-    print(\`Client info for \${player.Name}:\`, clientData.data)
-    
-    -- Use the data
-    local fps = clientData.data.fps or 60
-    local ping = clientData.data.ping or 100
-    
-    if fps < 30 then
-        warn(\`\${player.Name} has low FPS: \${fps}\`)
-    end
-else
-    warn(\`Failed to get client info from \${player.Name}: \${clientData.error}\`)
-end
-
--- Request client settings
-local settings = nexus:InvokeClient("GetSettings", player)
-
--- Validate and use settings
-if settings.success then
-    applyPlayerSettings(player, settings.data)
-end</code></pre>
-                </div>
-                
-                <h3>Async Invocation with Promises</h3>
-                <div class="code-block-inline">
-                    <pre><code>-- Using InvokeAsync for better async handling
-local Promise = require(ReplicatedStorage.Nexus.promise)
-
--- Basic async invoke
-nexus:InvokeAsync("GetPlayerData", "inventory")
-    :andThen(function(result)
-        if result.success then
-            print("Got inventory:", result.data)
-        else
-            warn("Failed:", result.error)
-        end
-    end)
-    :catch(function(error)
-        warn("Invoke failed:", error)
-    end)
-
--- Multiple async invocations
-Promise.all({
-    nexus:InvokeAsync("GetPlayerStats", "health"),
-    nexus:InvokeAsync("GetPlayerStats", "level"),
-    nexus:InvokeAsync("GetPlayerStats", "experience")
-})
-:andThen(function(results)
-    local health = results[1]
-    local level = results[2]
-    local exp = results[3]
-    
-    print(\`Player stats: \${health.data} HP, Level \${level.data}, \${exp.data} XP\`)
-end)
-:catch(function(error)
-    warn("Failed to get player stats:", error)
-end)</code></pre>
-                </div>
-                
-                <h3>Batch Invocations</h3>
-                <div class="code-block-inline">
-                    <pre><code>-- Batch multiple requests
-local requests = {
-    {"GetPlayerData", "inventory"},
-    {"GetPlayerData", "stats"},
-    {"GetPlayerData", "achievements"}
-}
-
-nexus:BatchInvoke("GetPlayerData", requests)
-    :andThen(function(results)
-        for i, result in ipairs(results) do
-            if result.success then
-                print(\`Request \${i} succeeded:\`, result.data)
-            end
-        end
-    end)
-    :catch(function(error)
-        warn("Batch invoke failed:", error)
-    end)
-
--- Alternative batch pattern
-local function batchInvoke(requests)
-    local promises = {}
-    
-    for _, request in ipairs(requests) do
-        table.insert(promises, nexus:InvokeAsync(unpack(request)))
-    end
-    
-    return Promise.all(promises)
-end</code></pre>
-                </div>
-                
-                <h2>Error Handling Patterns</h2>
-                
-                <h3>1. Structured Error Responses</h3>
-                <div class="code-block-inline">
-                    <pre><code>-- Server handler with error cases
-nexus:On("PurchaseItem", function(player, itemId, quantity)
-    -- Validate input
-    if not itemId or type(itemId) ~= "string" then
-        return {
-            success = false,
-            error = "Invalid item ID",
-            code = "INVALID_ITEM_ID"
-        }
-    end
-    
-    if quantity <= 0 then
-        return {
-            success = false,
-            error = "Invalid quantity",
-            code = "INVALID_QUANTITY"
-        }
-    end
-    
-    -- Check availability
-    local available = checkItemAvailability(itemId, quantity)
-    if not available then
-        return {
-            success = false,
-            error = "Item out of stock",
-            code = "OUT_OF_STOCK",
-            retryAfter = 60  -- seconds
-        }
-    end
-    
-    -- Process purchase
-    local success, purchaseId = processPurchase(player, itemId, quantity)
-    
-    if success then
-        return {
-            success = true,
-            data = {
-                purchaseId = purchaseId,
-                itemId = itemId,
-                quantity = quantity,
-                timestamp = os.time()
-            }
-        }
-    else
-        return {
-            success = false,
-            error = "Purchase failed",
-            code = "PURCHASE_FAILED"
-        }
-    end
-end)</code></pre>
-                </div>
-                
-                <h3>2. Client-Side Error Handling</h3>
-                <div class="code-block-inline">
-                    <pre><code>-- Client: Comprehensive error handling
-local function safePurchase(itemId, quantity)
-    local result = nexus:Invoke("PurchaseItem", itemId, quantity)
-    
-    if not result.success then
-        -- Handle specific error codes
-        if result.code == "INVALID_ITEM_ID" then
-            showError("Invalid item selected")
-        elseif result.code == "INVALID_QUANTITY" then
-            showError("Please enter a valid quantity")
-        elseif result.code == "OUT_OF_STOCK" then
-            showError("Item out of stock")
-            
-            -- Schedule retry if available
-            if result.retryAfter then
-                task.delay(result.retryAfter, function()
-                    safePurchase(itemId, quantity)
-                end)
-            end
-        elseif result.code == "PURCHASE_FAILED" then
-            showError("Purchase failed, please try again")
-        else
-            showError("An error occurred: " .. (result.error or "Unknown"))
-        end
-        
-        return false
-    end
-    
-    -- Success
-    showSuccess(\`Purchased \${quantity}x \${itemId}!\`)
-    updateInventory(result.data)
-    return true
-end</code></pre>
-                </div>
-                
-                <h3>3. Timeout Handling</h3>
-                <div class="code-block-inline">
-                    <pre><code>-- Custom timeout wrapper
-local function invokeWithTimeout(remoteName, timeout, ...)
-    local Promise = require(ReplicatedStorage.Nexus.promise)
-    
-    local invokePromise = nexus:InvokeAsync(remoteName, ...)
-    local timeoutPromise = Promise.new(function(resolve)
-        task.delay(timeout, function()
-            resolve({
-                success = false,
-                error = "Request timeout",
-                code = "TIMEOUT"
-            })
-        end)
-    end)
-    
-    return Promise.race({invokePromise, timeoutPromise})
-end
-
--- Usage
-invokeWithTimeout("GetPlayerData", 5, "inventory")
-    :andThen(function(result)
-        if result.success then
-            print("Got data:", result.data)
-        else
-            warn("Failed or timed out:", result.error)
-        end
-    end)</code></pre>
-                </div>
-                
-                <h2>Best Practices</h2>
-                
-                <div class="info-box success">
-                    <div class="info-box-icon">
-                        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                    </div>
-                    <div class="info-box-content">
-                        <p><strong>Always check the success field</strong> in responses before accessing data fields.</p>
-                    </div>
-                </div>
-                
-                <div class="info-box warning">
-                    <div class="info-box-icon">
-                        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
-                    </div>
-                    <div class="info-box-content">
-                        <p><strong>Use appropriate timeouts</strong> based on the expected processing time of the remote function.</p>
-                    </div>
-                </div>
-                
-                <div class="info-box info">
-                    <div class="info-box-icon">
-                        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
-                    </div>
-                    <div class="info-box-content">
-                        <p><strong>Consider using InvokeAsync</strong> for better async control and error handling compared to regular Invoke.</p>
-                    </div>
-                </div>
-            </div>
-        `
-    },
-
-    // Security Module page
-    security: {
-        title: 'Security Module',
-        content: `
-            <div class="content-section">
-                <h1>Security Module</h1>
-                <p class="lead-text">Advanced security features including packet signing, validation, threat detection, and player trust management.</p>
-                
-                <div class="method-badge server">
-                    <span>Module</span>
-                </div>
-                
-                <h2>Overview</h2>
-                <p>The Security module provides comprehensive security features for Nexus:</p>
-                <ul>
-                    <li><strong>Packet Security</strong> - Signing, validation, and integrity checks</li>
-                    <li><strong>Threat Detection</strong> - Exploit pattern detection and prevention</li>
-                    <li><strong>Player Management</strong> - Trust scores, session management, violation tracking</li>
-                    <li><strong>Rate Limiting</strong> - Integrated with RateLimiter module</li>
-                    <li><strong>Auto-Ban System</strong> - Automatic banning for repeated violations</li>
-                </ul>
-                
-                <h2>Initialization</h2>
-                <div class="code-block-inline">
-                    <pre><code>-- Basic initialization
-local Security = require(ReplicatedStorage.Nexus.security)
-local security = Security.new()
-security:Initialize({
-    threatDetection = true,
-    autoBanThreshold = 10,
-    packetTTL = 10,
-    enableSignatureVerification = true
-})</code></pre>
-                </div>
-                
-                <h2>Core Features</h2>
-                
-                <h3>1. Packet Signing and Validation</h3>
-                <div class="code-block-inline">
-                    <pre><code>-- Sign a packet
-local packet = {
-    id = HttpService:GenerateGUID(false),
-    timestamp = os.time(),
-    data = {playerId = 123, action = "jump"}
-}
-
-local signature = security:SignPacket(packet, player)
-
--- Verify a packet
-local isValid = security:VerifyPacket(packet, player, "PlayerAction")
-if not isValid then
-    security:RecordViolation(player, "PlayerAction", "Invalid packet signature")
-    return
-end
-
--- Create and sign complete packet
-local securePacket = security:CreateSecurePacket(
-    "PlayerAction", 
-    player, 
-    {action = "jump", timestamp = os.time()}
-)</code></pre>
-                </div>
-                
-                <h3>2. Player Trust Management</h3>
-                <div class="code-block-inline">
-                    <pre><code>-- Initialize player (call when player joins)
-security:InitializePlayer(player)
-
--- Get/Set trust score
-local trustScore = security:GetTrustScore(player)
-security:SetTrustScore(player, trustScore + 0.1)  -- Reward good behavior
-
--- Check if player is trusted
-if security:GetTrustScore(player) > 0.7 then
-    -- Player is highly trusted, allow special actions
-    allowSpecialAction(player)
-end
-
--- Session management
-local sessionId = security:CreateSession(player)
-local isValid = security:ValidateSession(sessionId, player)</code></pre>
-                </div>
-                
-                <h3>3. Violation Tracking</h3>
-                <div class="code-block-inline">
-                    <pre><code>-- Record violations
-security:RecordViolation(player, "PlayerChat", "Rate limit exceeded")
-security:RecordSuspiciousActivity(player, "PlayerAction", "Unusual packet size")
-
--- Check violation count
-local violations = security:GetViolationCount(player)
-if violations > 5 then
-    warn(\`Player \${player.Name} has \${violations} violations\`)
-end
-
--- Auto-ban on threshold
--- Configured in Initialize: autoBanThreshold = 10
--- After 10 violations, player is automatically banned</code></pre>
-                </div>
-                
-                <h3>4. Threat Detection</h3>
-                <div class="code-block-inline">
-                    <pre><code>-- Check for exploit patterns
-local hasExploit, pattern = security:DetectExploitPatterns(packet)
-if hasExploit then
-    security:RecordViolation(player, nil, \`Exploit pattern: \${pattern}\`)
-    security:FlagPlayer(player, "Exploit attempt")
-    return false
-end
-
--- Validate data structure
-local isValid, reason = security:ValidateDataStructure(data, 0)
-if not isValid then
-    security:RecordSuspiciousActivity(player, nil, \`Invalid structure: \${reason}\`)
-    return false
-end</code></pre>
-                </div>
-                
-                <h2>Configuration Options</h2>
-                <table class="param-table">
-                    <thead>
-                        <tr>
-                            <th>Option</th>
-                            <th>Type</th>
-                            <th>Default</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><code>threatDetection</code></td>
-                            <td>boolean</td>
-                            <td>true</td>
-                            <td>Enable exploit pattern detection</td>
-                        </tr>
-                        <tr>
-                            <td><code>autoBanThreshold</code></td>
-                            <td>number</td>
-                            <td>10</td>
-                            <td>Violations before auto-ban</td>
-                        </tr>
-                        <tr>
-                            <td><code>autoBanDuration</code></td>
-                            <td>number</td>
-                            <td>3600</td>
-                            <td>Ban duration in seconds (1 hour)</td>
-                        </tr>
-                        <tr>
-                            <td><code>packetTTL</code></td>
-                            <td>number</td>
-                            <td>10</td>
-                            <td>Packet time-to-live in seconds</td>
-                        </tr>
-                        <tr>
-                            <td><code>enableSignatureVerification</code></td>
-                            <td>boolean</td>
-                            <td>true</td>
-                            <td>Verify packet signatures</td>
-                        </tr>
-                        <tr>
-                            <td><code>enableKeyRotation</code></td>
-                            <td>boolean</td>
-                            <td>true</td>
-                            <td>Rotate encryption keys periodically</td>
-                        </tr>
-                        <tr>
-                            <td><code>sessionTimeout</code></td>
-                            <td>number</td>
-                            <td>300</td>
-                            <td>Session timeout in seconds (5 minutes)</td>
-                        </tr>
-                        <tr>
-                            <td><code>minTrustScore</code></td>
-                            <td>number</td>
-                            <td>0.1</td>
-                            <td>Minimum trust score (0-1)</td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <h2>Complete Example</h2>
-                <div class="code-block-inline">
-                    <pre><code>-- Complete security setup example
-local Security = require(ReplicatedStorage.Nexus.security)
-
--- Create and configure security
-local security = Security.new()
-security:Initialize({
-    threatDetection = true,
-    autoBanThreshold = 10,
-    autoBanDuration = 7200,  -- 2 hour bans
-    packetTTL = 15,
-    enableSignatureVerification = true,
-    enableKeyRotation = true,
-    sessionTimeout = 600,  -- 10 minutes
-    minTrustScore = 0.2,
-    debug = game:GetService("RunService"):IsStudio()
-})
-
--- Player join handler
-game:GetService("Players").PlayerAdded:Connect(function(player)
-    -- Initialize player security
-    security:InitializePlayer(player)
-    
-    -- Set initial trust based on account age
-    local accountAge = player.AccountAge or 0
-    local trustScore = math.min(1.0, accountAge / 365)  -- 1 year = full trust
-    security:SetTrustScore(player, trustScore)
-    
-    print(\`Player \${player.Name} initialized with trust score: \${trustScore}\`)
-end)
-
--- Packet validation middleware
-nexus:UseMiddleware("security", function(context)
-    local player = context.player
-    local packet = context.packet
-    
-    -- Basic validation
-    if not security:ValidatePacket(packet, player, context.remote) then
-        return false, "Invalid packet"
-    end
-    
-    -- Signature verification
-    if not security:VerifyPacket(packet, player, context.remote) then
-        security:RecordViolation(player, context.remote, "Invalid signature")
-        return false, "Security violation"
-    end
-    
-    -- Trust score check
-    local trustScore = security:GetTrustScore(player)
-    if trustScore < 0.3 then
-        -- Low trust players have stricter limits
-        -- You could apply additional restrictions here
-    end
-    
-    return true
-end)</code></pre>
-                </div>
-                
-                <h2>Reporting and Monitoring</h2>
-                <div class="code-block-inline">
-                    <pre><code>-- Generate security report
-local report = security:GenerateReport({
-    detailed = true,
-    player = specificPlayer  -- Optional: get report for specific player
-})
-
-print("Security Report:")
-print("Total violations:", report.summary.totalViolations)
-print("Active sessions:", report.summary.activeSessions)
-print("Blacklisted players:", report.summary.blacklistedPlayers)
-print("Average trust score:", report.summary.averageTrustScore)
-
--- Player-specific report
-if report.player then
-    print(\`Player \${report.player.username}:\`)
-    print("  Trust score:", report.player.trustScore)
-    print("  Is blacklisted:", report.player.isBlacklisted)
-    print("  Session ID:", report.player.sessionId)
-    
-    if report.player.violations then
-        print("  Violation count:", report.player.violations.count)
-    end
-end</code></pre>
-                </div>
-                
-                <div class="info-box warning">
-                    <div class="info-box-icon">
-                        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
-                    </div>
-                    <div class="info-box-content">
-                        <p><strong>Important:</strong> Always enable signature verification in production. Test security configurations thoroughly in a controlled environment before deployment.</p>
-                    </div>
-                </div>
-                
-                <div class="info-box info">
-                    <div class="info-box-icon">
-                        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
-                    </div>
-                    <div class="info-box-content">
-                        <p><strong>Tip:</strong> Use trust scores to implement progressive security measures. Low-trust players get stricter limits, high-trust players get more freedom.</p>
-                    </div>
-                </div>
-            </div>
-        `
-    },
-
-    // MemoryPool page
-    memorypool: {
-        title: 'MemoryPool Module',
-        content: `
-            <div class="content-section">
-                <h1>MemoryPool Module</h1>
-                <p class="lead-text">Object pooling system for efficient memory management and reduced garbage collection overhead.</p>
-                
-                <div class="method-badge both">
-                    <span>Module</span>
-                </div>
-                
-                <h2>Overview</h2>
-                <p>The MemoryPool module reduces garbage collection pressure by reusing objects instead of creating and destroying them:</p>
-                <ul>
-                    <li><strong>Object Pooling</strong> - Reuse frequently created objects</li>
-                    <li><strong>Memory Efficiency</strong> - Reduce allocation and GC overhead</li>
-                    <li><strong>Performance Boost</strong> - Faster object creation/destruction</li>
-                    <li><strong>Configurable Pools</strong> - Multiple pools for different object types</li>
-                </ul>
-                
-                <h2>Basic Usage</h2>
-                <div class="code-block-inline">
-                    <pre><code>-- Basic initialization
-local MemoryPool = require(ReplicatedStorage.Nexus.memorypool)
-local pool = MemoryPool.new()
-pool:Initialize(1000)  -- Create pool with 1000 objects capacity</code></pre>
-                </div>
-                
-                <h2>Core Methods</h2>
-                
-                <h3>1. Acquire Objects</h3>
-                <div class="code-block-inline">
-                    <pre><code>-- Acquire from pool
-local packet = pool:Acquire("packet", function()
-    -- Initializer function (called when new object is created)
+        <h3>Error Handling</h3>
+        <pre><code>-- All errors in handlers are automatically caught and logged
+Nexus:On("CriticalOperation", function(player, data)
+  -- If this throws an error, it will be:
+  -- 1. Logged to analytics
+  -- 2. Returned as {success: false, error: "..."} for functions
+  -- 3. Silently ignored for async events
+  
+  local result = doCriticalOperation(data)
+  
+  if not result then
+    -- Return structured error for functions
     return {
-        id = "",
-        timestamp = 0,
-        data = {},
-        metadata = {}
+      success = false,
+      error = "Operation failed",
+      code = "OPERATION_FAILED"
     }
+  end
+  
+  return {success = true, data = result}
+end)</code></pre>
+
+        <h3>Best Practices</h3>
+        <ul>
+          <li>Always validate inputs in handlers (even with schemas)</li>
+          <li>Use async handlers for non-critical operations</li>
+          <li>Set appropriate timeouts for function handlers</li>
+          <li>Return structured responses for functions</li>
+          <li>Keep handlers focused on single responsibilities</li>
+        </ul>
+      `
+    },
+    {
+      "title": "Middleware Integration",
+      "content": `
+        <p>Handlers can be enhanced with middleware for cross-cutting concerns like authentication, logging, and rate limiting.</p>
+
+        <h3>Middleware Example</h3>
+        <pre><code>-- Register authentication middleware
+Nexus:UseMiddleware("auth", function(context)
+  local player = context.player
+  local packet = context.packet
+  
+  -- Check if player is authenticated
+  if not AuthService:IsAuthenticated(player) then
+    return false, "Player not authenticated"
+  end
+  
+  -- Check session validity
+  if not Security:ValidateSession(packet.metadata.sessionId, player) then
+    return false, "Invalid session"
+  end
+  
+  return true
 end)
 
--- Use the object
-packet.id = HttpService:GenerateGUID(false)
-packet.timestamp = os.clock()
-packet.data = {playerId = 123, action = "jump"}
+-- Apply middleware to specific remote
+Nexus:RegisterRemote("PurchaseItem", "Function", {
+  schema = {...},
+  middleware = {"auth", "logging"}  -- Chain of middleware
+})</code></pre>
+      `
+    }
+  ],
 
--- Acquire table
-local tempTable = pool:Acquire("table")
-table.insert(tempTable, "item1")
-table.insert(tempTable, "item2")</code></pre>
-                </div>
-                
-                <h3>2. Release Objects</h3>
-                <div class="code-block-inline">
-                    <pre><code>-- Release back to pool when done
-pool:Release("packet", packet)
+  "Communication": [
+    {
+      "title": "Communication Architecture",
+      "content": `
+        <p>Nexus uses a secure, packet-based communication system with multilayered serialization, compression, and encryption.</p>
 
--- Release table
-pool:Release("table", tempTable)
+        <h3>Packet Structure</h3>
+        <pre><code>Packet = {
+  id: string,           // Unique packet ID (GUID)
+  version: number,      // Protocol version (2)
+  timestamp: number,    // Creation time (os.clock())
+  signature: string,    // Cryptographic signature
+  checksum: string,     // Data integrity check
+  nonce: string,        // Anti-replay token
+  compression: string?, // Compression algorithm used
+  encryption: string?,  // Encryption algorithm used
+  data: any,           // Serialized payload
+  metadata: {
+    sender: string?,    // Player ID or "server"
+    priority: number?,  // Processing priority (1-10)
+    ttl: number?,       // Time-to-live in seconds
+    batchId: string?,   // Batch identifier
+    sequence: number?,  // Sequence number for ordering
+    sessionId: string?, // Player session ID
+    remote: string,     // Target remote name
+    platform: string    // "roblox"
+  }
+}</code></pre>
 
--- Objects are automatically cleared when released
--- No need to manually clear tables</code></pre>
-                </div>
-                
-                <h3>3. Custom Pools</h3>
-                <div class="code-block-inline">
-                    <pre><code>-- Create custom pool for specific object type
-local vectorPool = MemoryPool.new()
-vectorPool:Initialize(500)
+        <h3>Communication Flow</h3>
+        <div class="mermaid">
+          graph TD
+            A[Client/Server] --> B[Create Packet]
+            B --> C[Serialize Data]
+            C --> D[Compress]
+            D --> E[Sign Packet]
+            E --> F[Add Metadata]
+            F --> G[Send via Roblox Remote]
+            G --> H[Receive Packet]
+            H --> I[Verify Signature]
+            I --> J[Decompress]
+            J --> K[Deserialize]
+            K --> L[Validate]
+            L --> M[Execute Handler]
+            M --> N[Return Response]
+        </div>
 
--- Custom initializer for Vector3 objects
-local vector = vectorPool:Acquire("vector3", function()
-    return Vector3.new(0, 0, 0)
-end)
+        <h3>Security Layers</h3>
+        <ol>
+          <li><strong>Packet Signing:</strong> All packets are cryptographically signed</li>
+          <li><strong>Checksum Verification:</strong> Data integrity validation</li>
+          <li><strong>Nonce Tracking:</strong> Prevents replay attacks</li>
+          <li><strong>TTL Enforcement:</strong> Prevents stale packets</li>
+          <li><strong>Session Validation:</strong> Ensures valid player sessions</li>
+          <li><strong>Rate Limiting:</strong> Prevents abuse and DoS</li>
+        </ol>
 
--- Use vector
-vector = Vector3.new(10, 20, 30)
+        <h3>Performance Features</h3>
+        <ul>
+          <li><strong>Batching:</strong> Multiple events combined into single packets</li>
+          <li><strong>Compression:</strong> Automatic compression for large payloads</li>
+          <li><strong>Memory Pooling:</strong> Reusable packet objects</li>
+          <li><strong>Caching:</strong> Serialization/compression cache</li>
+          <li><strong>Priority Queues:</strong> Prioritized packet processing</li>
+        </ul>
+      `
+    },
+    {
+      "title": "Network Optimization",
+      "content": `
+        <h3>Batching System</h3>
+        <pre><code>-- Enable batching for high-frequency events
+Nexus:EnableBatching("PlayerPosition", 0.1, 50)  // Batch every 0.1s, max 50 events
 
--- Release
-vectorPool:Release("vector3", vector)</code></pre>
-                </div>
-                
-                <h2>Complete Example</h2>
-                <div class="code-block-inline">
-                    <pre><code>-- Complete MemoryPool integration with Nexus
-local MemoryPool = require(ReplicatedStorage.Nexus.memorypool)
+-- Batched packet structure
+{
+  batch: true,
+  events: [
+    {player: Player, data: {...}, timestamp: number},
+    {player: Player, data: {...}, timestamp: number},
+    // ...
+  ],
+  metadata: {
+    batch: true,
+    count: number,
+    remote: string
+  }
+}</code></pre>
 
--- Create memory pool
+        <h3>Compression Strategies</h3>
+        <table class="comparison-table">
+          <tr><th>Algorithm</th><th>Use Case</th><th>Compression</th><th>CPU Cost</th></tr>
+          <tr><td>RLE</td><td>Repeated values</td><td>Low-Medium</td><td>Low</td></tr>
+          <tr><td>Dictionary</td><td>JSON data</td><td>Medium</td><td>Low</td></tr>
+          <tr><td>LZ4</td><td>Large payloads</td><td>High</td><td>Medium</td></tr>
+          <tr><td>Base64</td><td>Binary safety</td><td>Expands</td><td>Low</td></tr>
+        </table>
+
+        <h3>Memory Management</h3>
+        <pre><code>-- Object pooling for frequent allocations
 local pool = MemoryPool.new()
-pool:Initialize(2000)  -- Pool of 2000 objects
+pool:Initialize(1000)  // Pool of 1000 objects
 
--- Packet creation with pooling
-function createPacket(remoteName, player, data)
-    -- Acquire packet from pool
-    local packet = pool:Acquire("packet", function()
-        return {
-            id = "",
-            version = 2,
-            timestamp = 0,
-            signature = "",
-            checksum = "",
-            nonce = "",
-            data = nil,
-            metadata = {
-                sender = "",
-                remote = "",
-                priority = 1,
-                ttl = 10,
-                platform = "roblox"
-            }
-        }
-    end)
-    
-    -- Fill packet data
-    packet.id = HttpService:GenerateGUID(false)
-    packet.timestamp = os.clock()
-    packet.metadata.sender = player and tostring(player.UserId) or "server"
-    packet.metadata.remote = remoteName
-    packet.data = data
-    
-    -- Calculate checksum and signature
-    packet.checksum = security:CalculateChecksum(packet)
-    packet.signature = security:SignPacket(packet, packet.metadata.sender)
-    
-    return packet
-end
-
--- Packet cleanup
-function cleanupPacket(packet)
-    -- Release packet back to pool
-    pool:Release("packet", packet)
-end
-
--- Usage in Nexus handler
-nexus:On("PlayerUpdate", function(player, updateData)
-    -- Create packet using pool
-    local packet = createPacket("PlayerUpdate", player, updateData)
-    
-    -- Process packet...
-    
-    -- Cleanup
-    cleanupPacket(packet)
-end)</code></pre>
-                </div>
-                
-                <h2>Advanced Patterns</h2>
-                
-                <h3>1. Scoped Pool Usage</h3>
-                <div class="code-block-inline">
-                    <pre><code>-- Scoped pool usage pattern
-local function withTempTable(callback)
-    local tempTable = pool:Acquire("table")
-    
-    local success, result = pcall(callback, tempTable)
-    
-    -- Always release, even if callback errors
-    pool:Release("table", tempTable)
-    
-    if not success then
-        error(result)
-    end
-    
-    return result
-end
-
--- Usage
-local processed = withTempTable(function(temp)
-    -- Use temp table
-    for i = 1, 100 do
-        table.insert(temp, i * 2)
-    end
-    
-    -- Process data
-    return processData(temp)
-end)</code></pre>
-                </div>
-                
-                <h3>2. Pool Statistics</h3>
-                <div class="code-block-inline">
-                    <pre><code>-- Track pool usage
-local poolStats = {
-    acquisitions = 0,
-    releases = 0,
-    hits = 0,      -- Object from pool
-    misses = 0     -- New object created
-}
-
--- Wrap acquire to track
-local originalAcquire = pool.Acquire
-function pool:Acquire(poolName, initializer)
-    poolStats.acquisitions = poolStats.acquisitions + 1
-    
-    local poolData = self.pools[poolName]
-    if poolData and #poolData.objects > 0 then
-        poolStats.hits = poolStats.hits + 1
-    else
-        poolStats.misses = poolStats.misses + 1
-    end
-    
-    return originalAcquire(self, poolName, initializer)
-end
-
--- Print stats periodically
-task.spawn(function()
-    while true do
-        task.wait(60)
-        print("Pool Stats:")
-        print("  Acquisitions:", poolStats.acquisitions)
-        print("  Releases:", poolStats.releases)
-        print("  Hits:", poolStats.hits)
-        print("  Misses:", poolStats.misses)
-        print("  Hit Rate:", poolStats.hits / math.max(1, poolStats.acquisitions))
-    end
-end)</code></pre>
-                </div>
-                
-                <h2>Performance Comparison</h2>
-                
-                <table class="param-table">
-                    <thead>
-                        <tr>
-                            <th>Operation</th>
-                            <th>Without Pool</th>
-                            <th>With Pool</th>
-                            <th>Improvement</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Table Creation</td>
-                            <td>Allocates new memory</td>
-                            <td>Reuses existing memory</td>
-                            <td>10-100x faster</td>
-                        </tr>
-                        <tr>
-                            <td>Garbage Collection</td>
-                            <td>Frequent GC pauses</td>
-                            <td>Reduced GC pressure</td>
-                            <td>50-90% less GC time</td>
-                        </tr>
-                        <tr>
-                            <td>Memory Usage</td>
-                            <td>High, fluctuating</td>
-                            <td>Stable, predictable</td>
-                            <td>Better memory profile</td>
-                        </tr>
-                        <tr>
-                            <td>Packet Creation</td>
-                            <td>~0.5ms per packet</td>
-                            <td>~0.05ms per packet</td>
-                            <td>10x faster</td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <h2>Best Practices</h2>
-                
-                <div class="info-box success">
-                    <div class="info-box-icon">
-                        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                    </div>
-                    <div class="info-box-content">
-                        <p><strong>Always release objects</strong> back to the pool when you're done with them to prevent memory leaks.</p>
-                    </div>
-                </div>
-                
-                <div class="info-box warning">
-                    <div class="info-box-icon">
-                        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
-                    </div>
-                    <div class="info-box-content">
-                        <p><strong>Don't hold references</strong> to pooled objects after releasing them. The object will be reused by other code.</p>
-                    </div>
-                </div>
-                
-                <div class="info-box info">
-                    <div class="info-box-icon">
-                        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
-                    </div>
-                    <div class="info-box-content">
-                        <p><strong>Size pools appropriately</strong> based on your expected usage. Too small = frequent allocations, too large = wasted memory.</p>
-                    </div>
-                </div>
-            </div>
-        `
-    },
-
-    // Add more module pages here...
-    'validator': {
-        title: 'Validator Module',
-        content: `
-            <div class="content-section">
-                <h1>Validator Module</h1>
-                <p class="lead-text">Type validation and schema enforcement for secure data handling.</p>
-                
-                <div class="method-badge both">
-                    <span>Module</span>
-                </div>
-                
-                <h2>Basic Usage</h2>
-                <div class="code-block-inline">
-                    <pre><code>local Validator = require(ReplicatedStorage.Nexus.validator)
-local validator = Validator.new()
-
--- Register schema
-validator:RegisterSchema("PlayerData", {
-    playerId = "number",
-    username = "string",
-    position = "Vector3",
-    inventory = {"table", {
-        id = "number",
-        count = "number"
-    }}
-})
-
--- Validate data
-local data = {
-    playerId = 123,
-    username = "Player1",
-    position = Vector3.new(0, 0, 0),
-    inventory = {
-        {id = 1, count = 5},
-        {id = 2, count = 3}
-    }
-}
-
-local isValid, error = validator:Validate(data, "PlayerData")
-if not isValid then
-    warn("Validation failed:", error)
-end</code></pre>
-                </div>
-            </div>
-        `
-    },
-
-    'serializer': {
-        title: 'Serializer Module',
-        content: `
-            <div class="content-section">
-                <h1>Serializer Module</h1>
-                <p class="lead-text">Data serialization and compression for efficient network transmission.</p>
-                
-                <div class="method-badge both">
-                    <span>Module</span>
-                </div>
-                
-                <h2>Basic Usage</h2>
-                <div class="code-block-inline">
-                    <pre><code>local Serializer = require(ReplicatedStorage.Nexus.serializer)
-local serializer = Serializer.new()
-
--- Serialize data
-local data = {
-    playerId = 123,
-    position = Vector3.new(10, 20, 30),
-    inventory = {"sword", "shield", "potion"}
-}
-
-local serialized = serializer:Serialize(data)
-
--- Deserialize
-local deserialized = serializer:Deserialize(serialized)
-
--- Compress large data
-local compressed = serializer:Compress(largeData)
-local decompressed = serializer:Decompress(compressed)</code></pre>
-                </div>
-            </div>
-        `
-    },
-
-    'ratelimiter': {
-        title: 'RateLimiter Module',
-        content: `
-            <div class="content-section">
-                <h1>RateLimiter Module</h1>
-                <p class="lead-text">Dual-layer rate limiting for client and server-side protection.</p>
-                
-                <div class="method-badge both">
-                    <span>Module</span>
-                </div>
-                
-                <h2>Basic Usage</h2>
-                <div class="code-block-inline">
-                    <pre><code>local RateLimiter = require(ReplicatedStorage.Nexus.ratelimiter)
-local rateLimiter = RateLimiter.new()
-
--- Set limits
-rateLimiter:SetLimit("PlayerChat", {
-    client = 10,   -- 10 calls per window client-side
-    server = 100,  -- 100 calls per window server-side
-    window = 1,    -- 1 second window
-    adaptive = true
-})
-
--- Check limit
-local canProceed, waitTime = rateLimiter:CheckLimit("client", "PlayerChat")
-if not canProceed then
-    warn(\`Rate limit exceeded. Wait \${waitTime} seconds.\`)
-end</code></pre>
-                </div>
-            </div>
-        `
-    },
-
-    'promise': {
-        title: 'Promise Module',
-        content: `
-            <div class="content-section">
-                <h1>Promise Module</h1>
-                <p class="lead-text">Promise/A+ implementation for asynchronous programming patterns.</p>
-                
-                <div class="method-badge both">
-                    <span>Module</span>
-                </div>
-                
-                <h2>Basic Usage</h2>
-                <div class="code-block-inline">
-                    <pre><code>local Promise = require(ReplicatedStorage.Nexus.promise)
-
--- Create promise
-local promise = Promise.new(function(resolve, reject)
-    task.wait(1)
-    resolve("Success!")
-end)
-
--- Chain promises
-promise
-    :andThen(function(result)
-        print("Result:", result)
-        return "Processed: " .. result
-    end)
-    :andThen(function(processed)
-        print("Processed:", processed)
-    end)
-    :catch(function(error)
-        warn("Error:", error)
-    end)
-
--- Multiple promises
-Promise.all({
-    promise1,
-    promise2,
-    promise3
-}):andThen(function(results)
-    print("All promises completed:", results)
-end)</code></pre>
-                </div>
-            </div>
-        `
-    },
-
-    'circuitbreaker': {
-        title: 'CircuitBreaker Module',
-        content: `
-            <div class="content-section">
-                <h1>CircuitBreaker Module</h1>
-                <p class="lead-text">Fault tolerance pattern for remote calls with automatic recovery.</p>
-                
-                <div class="method-badge both">
-                    <span>Module</span>
-                </div>
-                
-                <h2>Basic Usage</h2>
-                <div class="code-block-inline">
-                    <pre><code>local CircuitBreaker = require(ReplicatedStorage.Nexus.circuitbreaker)
-local circuitBreaker = CircuitBreaker.new()
-
--- Configure circuit breaker
-circuitBreaker:Configure("PlayerDataService", {
-    failureThreshold = 5,      -- 5 failures opens circuit
-    resetTimeout = 30,         -- 30 seconds to try reset
-    halfOpenMaxAttempts = 3    -- 3 attempts in half-open state
-})
-
--- Check if can execute
-if circuitBreaker:CanExecute("PlayerDataService") then
-    -- Make remote call
-    local success = pcall(function()
-        -- Your remote call here
-    end)
-    
-    if success then
-        circuitBreaker:RecordSuccess("PlayerDataService")
-    else
-        circuitBreaker:RecordFailure("PlayerDataService")
-    end
-else
-    warn("Circuit breaker open for PlayerDataService")
-end</code></pre>
-                </div>
-            </div>
-        `
-    }
-};
-
-// Code examples for the code panel (Lua only)
-const codeExamples = {
-    about: {
-        lua: `-- Basic Nexus setup example
-local Nexus = require(ReplicatedStorage.Nexus.init)
-
--- Create Nexus instance
-local nexus = Nexus.new({
-    security = {
-        enforceRateLimits = true,
-        validateSignatures = true
-    },
-    performance = {
-        useMemoryPool = true,
-        compressionThreshold = 512
-    }
-})
-
--- Initialize
-nexus:Initialize({
-    remotesFolder = ReplicatedStorage:WaitForChild("NexusRemotes"),
-    debug = game:GetService("RunService"):IsStudio()
-})
-
-print("Nexus initialized successfully!")`
-    },
-    'getting-started': {
-        lua: `-- Complete getting started example
-local Nexus = require(ReplicatedStorage.Nexus.init)
-
--- Server-side setup
-if game:GetService("RunService"):IsServer() then
-    local nexus = Nexus.new()
-    nexus:Initialize()
-    
-    -- Register a simple event
-    nexus:RegisterRemote("PlayerJoined", "Event", {
-        rateLimit = { client = 5, server = 50, window = 1 },
-        schema = { "string", "number" }
-    })
-    
-    nexus:On("PlayerJoined", function(player, username, timestamp)
-        print(\`\${username} joined at \${timestamp}\`)
-        -- Welcome the player
-        nexus:FireClient("WelcomeMessage", player, "Welcome to the game!")
-    end)
-    
-    -- Register a function
-    nexus:RegisterRemote("GetPlayerStats", "Function", {
-        schema = { "string" },
-        timeout = 5
-    })
-    
-    nexus:On("GetPlayerStats", function(player, statType)
-        return {
-            success = true,
-            data = playerData[statType] or {}
-        }
-    end)
-end
-
--- Client-side setup
-if game:GetService("RunService"):IsClient() then
-    local nexus = Nexus.new()
-    nexus:Initialize()
-    
-    -- Fire event to server
-    local player = game.Players.LocalPlayer
-    nexus:Fire("PlayerJoined", player.Name, os.time())
-    
-    -- Invoke function and handle response
-    local response = nexus:Invoke("GetPlayerStats", "inventory")
-    if response.success then
-        print("Inventory:", response.data)
-    end
-end`
-    },
-    architecture: {
-        lua: `-- Architecture example showing module interaction
-local Nexus = require(ReplicatedStorage.Nexus.init)
-local Serializer = require(ReplicatedStorage.Nexus.serializer)
-local Validator = require(ReplicatedStorage.Nexus.validator)
-
--- Create instances
-local nexus = Nexus.new()
-local serializer = Serializer.new()
-local validator = Validator.new()
-
--- Initialize Nexus
-nexus:Initialize()
-
--- Example of module interaction
-local data = {
-    playerId = 123,
-    position = Vector3.new(10, 20, 30),
-    inventory = {"sword", "shield", "potion"}
-}
-
--- Validate data
-local valid, error = validator:Validate(data, {
-    playerId = "number",
-    position = "Vector3",
-    inventory = {"string"}
-})
-
-if valid then
-    -- Serialize data
-    local serialized = serializer:Serialize(data, {
-        compress = true,
-        strategy = "json"
-    })
-    
-    print("Data serialized:", #serialized, "bytes")
-    
-    -- Send via Nexus
-    nexus:Fire("PlayerUpdate", serialized)
-else
-    warn("Validation failed:", error)
-end`
-    },
-    nexusremote: {
-        lua: `-- NexusRemote usage examples
-local Nexus = require(ReplicatedStorage.Nexus.init)
-
--- Create instance with configuration
-local nexus = Nexus.new({
-    security = {
-        enforceRateLimits = true,
-        validateSignatures = true,
-        packetTTL = 10
-    },
-    performance = {
-        batchInterval = 0.1,
-        maxBatchSize = 50
-    }
-})
-
--- Initialize
-nexus:Initialize({
-    debug = true
-})
-
--- Example 1: Register and use an event
-nexus:RegisterRemote("PlayerChat", "Event", {
-    rateLimit = { client = 10, server = 100, window = 1 },
-    schema = { "string", "number" }
-})
-
-nexus:On("PlayerChat", function(player, message, timestamp)
-    print(\`\${player.Name}: \${message} (\${timestamp})\`)
-    
-    -- Broadcast to other players
-    for _, otherPlayer in pairs(game:GetService("Players"):GetPlayers()) do
-        if otherPlayer ~= player then
-            nexus:FireClient("ChatMessage", otherPlayer, player.Name, message)
-        end
-    end
-end)
-
--- Example 2: Register and use a function
-nexus:RegisterRemote("GetPlayerData", "Function", {
-    schema = { "string" },
-    timeout = 5
-})
-
-nexus:On("GetPlayerData", function(player, dataType)
-    if dataType == "inventory" then
-        return {
-            success = true,
-            data = {
-                gold = 100,
-                items = {"sword", "shield", "potion"}
-            }
-        }
-    elseif dataType == "stats" then
-        return {
-            success = true,
-            data = {
-                level = 10,
-                experience = 4500,
-                health = 100
-            }
-        }
-    else
-        return {
-            success = false,
-            error = "Unknown data type",
-            code = "INVALID_TYPE"
-        }
-    end
-end)`
-    },
-    initialization: {
-        lua: `-- Initialization examples
-local Nexus = require(ReplicatedStorage.Nexus.init)
-
--- Example 1: Basic initialization
-local nexus1 = Nexus.new()
-nexus1:Initialize()  -- Uses defaults
-
--- Example 2: Server initialization with custom folder
-local nexus2 = Nexus.new({
-    security = {
-        autoBanThreshold = 10,
-        threatDetection = true
-    }
-})
-
-nexus2:Initialize({
-    remotesFolder = Instance.new("Folder"),
-    debug = true,
-    profile = true
-})
-
--- Example 3: Client initialization
-local nexus3 = Nexus.new({
-    performance = {
-        useMemoryPool = true,
-        compressionThreshold = 256
-    }
-})
-
-nexus3:Initialize({
-    debug = false  -- Disable debug on client
-})
-
--- Example 4: Error handling during initialization
-local success, error = pcall(function()
-    local nexus4 = Nexus.new()
-    nexus4:Initialize({
-        remotesFolder = "invalid"  -- This will cause an error
-    })
-end)
-
-if not success then
-    warn("Initialization failed:", error)
-end
-
--- Example 5: Re-initialization protection
-local nexus5 = Nexus.new()
-nexus5:Initialize()
-
--- Trying to initialize again will warn
-nexus5:Initialize()  -- Prints: "[Nexus] Already initialized"`
-    },
-    'register-remote': {
-        lua: `-- RegisterRemote examples
-local Nexus = require(ReplicatedStorage.Nexus.init)
-local nexus = Nexus.new()
-nexus:Initialize()
-
--- Example 1: Simple event
-nexus:RegisterRemote("PlayerMove", "Event", {
-    schema = {"Vector3", "number"}  -- position, timestamp
-})
-
--- Example 2: Function with rate limiting
-nexus:RegisterRemote("PurchaseItem", "Function", {
-    rateLimit = {
-        client = 5,
-        server = 20,
-        window = 2,
-        adaptive = true
-    },
-    schema = {
-        itemId = "string",
-        quantity = "number"
-    },
-    timeout = 10
-})
-
--- Example 3: Complex schema
-nexus:RegisterRemote("UpdatePlayer", "Event", {
-    schema = {
-        position = "Vector3",
-        velocity = "Vector3",
-        state = "string",
-        timestamp = "number",
-        metadata = {"table", {
-            health = "number",
-            stamina = "number",
-            effects = {"string"}
-        }}
-    }
-})`
-    },
-    handlers: {
-        lua: `-- Handler examples
-local Nexus = require(ReplicatedStorage.Nexus.init)
-local nexus = Nexus.new()
-nexus:Initialize()
-
--- Register remote first
-nexus:RegisterRemote("PlayerAction", "Event", {
-    schema = {"string", "Vector3"}
-})
-
--- Example 1: Basic handler
-nexus:On("PlayerAction", function(player, action, position)
-    print(\`\${player.Name} performed \${action} at \${position}\`)
-    
-    -- Update game state
-    if action == "jump" then
-        player.Character.Humanoid.Jump = true
-    end
-end)
-
--- Example 2: Function handler with return
-nexus:RegisterRemote("GetPlayerInfo", "Function", {
-    schema = {"string"}
-})
-
-nexus:On("GetPlayerInfo", function(player, infoType)
-    local playerData = getPlayerData(player)
-    
-    if infoType == "stats" then
-        return {
-            success = true,
-            data = playerData.stats
-        }
-    elseif infoType == "inventory" then
-        return {
-            success = true,
-            data = playerData.inventory
-        }
-    else
-        return {
-            success = false,
-            error = "Unknown info type",
-            code = "UNKNOWN_TYPE"
-        }
-    end
-end)
-
--- Example 3: Async handler
-nexus:On("ProcessHeavy", function(player, data)
-    -- Process in background
-    task.spawn(function()
-        local result = processHeavyData(data)
-        nexus:FireClient("ProcessingComplete", player, result)
-    end)
-    
-    return {success = true, message = "Processing started"}
-end, {async = true})`
-    },
-    fire: {
-        lua: `-- Fire examples
-local Nexus = require(ReplicatedStorage.Nexus.init)
-local nexus = Nexus.new()
-nexus:Initialize()
-
--- Client-side examples
-if game:GetService("RunService"):IsClient() then
-    -- Simple event
-    nexus:Fire("PlayerChat", "Hello world!", os.time())
-    
-    -- With structured data
-    nexus:Fire("PlayerUpdate", {
-        position = game.Players.LocalPlayer.Character.HumanoidRootPart.Position,
-        health = 100,
-        actions = {"walk", "run", "jump"}
-    })
-end
-
--- Server-side examples
-if game:GetService("RunService"):IsServer() then
-    -- To specific player
-    nexus:FireClient("PrivateMessage", player, "Welcome to the game!")
-    
-    -- To all players
-    nexus:FireAllClients("GameAnnouncement", 
-        "Server Maintenance", 
-        "Restarting in 5 minutes",
-        os.time() + 300
-    )
-    
-    -- To all except one
-    nexus:On("PlayerChat", function(sender, message)
-        nexus:FireExcept("ChatMessage", sender, sender.Name, message)
-    end)
-end`
-    },
-    invoke: {
-        lua: `-- Invoke examples
-local Nexus = require(ReplicatedStorage.Nexus.init)
-local nexus = Nexus.new()
-nexus:Initialize()
-
--- Client to server
-if game:GetService("RunService"):IsClient() then
-    -- Basic invoke
-    local result = nexus:Invoke("GetPlayerData", "inventory")
-    
-    if result.success then
-        print("Inventory:", result.data)
-    else
-        warn("Failed:", result.error)
-    end
-    
-    -- With timeout handling
-    local function safeInvoke(remoteName, ...)
-        local success, result = pcall(function()
-            return nexus:Invoke(remoteName, ...)
-        end)
-        
-        if not success then
-            return {success = false, error = "Invocation failed"}
-        end
-        
-        return result
-    end
-    
-    local data = safeInvoke("GetData", "important")
-end
-
--- Server to client
-if game:GetService("RunService"):IsServer() then
-    -- Request client info
-    local clientInfo = nexus:InvokeClient("GetClientInfo", player)
-    
-    if clientInfo.success then
-        print(\`Client FPS: \${clientInfo.data.fps}\`)
-    end
-end
-
--- Async invoke
-nexus:InvokeAsync("ProcessData", largeData)
-    :andThen(function(result)
-        if result.success then
-            print("Processed:", result.data)
-        end
-    end)
-    :catch(function(error)
-        warn("Process failed:", error)
-    end)`
-    },
-    security: {
-        lua: `-- Security module examples
-local Security = require(ReplicatedStorage.Nexus.security)
-
--- Initialize security
-local security = Security.new()
-security:Initialize({
-    threatDetection = true,
-    autoBanThreshold = 10,
-    packetTTL = 10,
-    enableSignatureVerification = true
-})
-
--- Player management
-game:GetService("Players").PlayerAdded:Connect(function(player)
-    security:InitializePlayer(player)
-    
-    -- Set trust based on account age
-    local trustScore = math.min(1.0, (player.AccountAge or 0) / 365)
-    security:SetTrustScore(player, trustScore)
-    
-    print(\`Player \${player.Name} trust: \${trustScore}\`)
-end)
-
--- Packet validation
-function validateIncomingPacket(packet, player, remoteName)
-    -- Basic validation
-    if not security:ValidatePacket(packet, player, remoteName) then
-        return false, "Invalid packet"
-    end
-    
-    -- Signature verification
-    if not security:VerifyPacket(packet, player, remoteName) then
-        security:RecordViolation(player, remoteName, "Invalid signature")
-        return false, "Security violation"
-    end
-    
-    -- Trust check
-    if security:GetTrustScore(player) < 0.3 then
-        -- Apply stricter validation for low-trust players
-        return false, "Low trust score"
-    end
-    
-    return true
-end
-
--- Threat detection
-local data = packet.data
-local hasExploit, pattern = security:DetectExploitPatterns(data)
-if hasExploit then
-    security:FlagPlayer(player, \`Exploit attempt: \${pattern}\`)
-    return false
-end`
-    },
-    memorypool: {
-        lua: `-- MemoryPool examples
-local MemoryPool = require(ReplicatedStorage.Nexus.memorypool)
-
--- Initialize pool
-local pool = MemoryPool.new()
-pool:Initialize(1000)  -- 1000 object capacity
-
--- Basic usage
+-- Acquire and release objects
 local packet = pool:Acquire("packet", function()
-    return {
-        id = "",
-        timestamp = 0,
-        data = {},
-        metadata = {}
-    }
+  return {id = HttpService:GenerateGUID(false)}
 end)
 
 -- Use packet
-packet.id = HttpService:GenerateGUID(false)
-packet.timestamp = os.time()
-packet.data = {playerId = 123, action = "jump"}
+packet.data = serializedData
 
--- Release when done
-pool:Release("packet", packet)
+-- Return to pool
+pool:Release("packet", packet)</code></pre>
+      `
+    }
+  ],
 
--- Table pooling
-local tempTable = pool:Acquire("table")
+  "Fire Events": [
+    {
+      "title": "Fire Methods - One-way Communication",
+      "content": `
+        <p>Fire methods provide one-way, asynchronous communication suitable for notifications, updates, and broadcasts.</p>
 
--- Add data
-for i = 1, 100 do
-    table.insert(tempTable, i)
+        <h3>Available Methods</h3>
+        <table class="method-table">
+          <tr><th>Method</th><th>Direction</th><th>Use Case</th></tr>
+          <tr><td><code>Fire</code></td><td>Client → Server</td><td>Client sending data to server</td></tr>
+          <tr><td><code>FireClient</code></td><td>Server → Specific Client</td><td>Server targeting single player</td></tr>
+          <tr><td><code>FireAllClients</code></td><td>Server → All Clients</td><td>Broadcasts and announcements</td></tr>
+          <tr><td><code>FireExcept</code></td><td>Server → All Except One</td><td>Excluding specific players</td></tr>
+        </table>
+
+        <h3>Fire (Client to Server)</h3>
+        <pre><code>-- Client-side: Fire event to server
+local success = Nexus:Fire("PlayerJumped", jumpHeight, velocity)
+
+if not success then
+  -- Handle failure (rate limited, circuit breaker, etc.)
+  warn("Failed to send jump event")
+end</code></pre>
+
+        <h3>FireClient (Server to Specific Client)</h3>
+        <pre><code>-- Server-side: Send to specific player
+local success = Nexus:FireClient("ShowNotification", player, {
+  type = "achievement",
+  title = "First Jump!",
+  message = "You jumped for the first time!"
+})
+
+if not success then
+  -- Player may be rate limited or have low trust score
+  warn("Failed to send notification to", player.Name)
+end</code></pre>
+
+        <h3>FireAllClients (Server Broadcast)</h3>
+        <pre><code>-- Server-side: Broadcast to all players
+local success = Nexus:FireAllClients("PlayerJoined", {
+  userId = newPlayer.UserId,
+  username = newPlayer.Name,
+  joinTime = os.time()
+})
+
+-- For large player counts (>50), automatically batches
+-- Skips players with trust score < 0.5</code></pre>
+
+        <h3>FireExcept (Targeted Broadcast)</h3>
+        <pre><code>-- Server-side: Broadcast to all except one player
+Nexus:FireExcept("PlayerLeft", leavingPlayer, {
+  userId = leavingPlayer.UserId,
+  reason = "Disconnected"
+})
+
+-- Useful for:
+-- 1. Hiding a player's own actions from themselves
+-- 2. Excluding the perpetrator from notifications
+-- 3. Targeted updates</code></pre>
+
+        <h3>Return Values and Error Handling</h3>
+        <pre><code>-- All Fire methods return boolean success
+local success = Nexus:FireClient("UpdateUI", player, data)
+
+if success then
+  print("Event sent successfully")
+else
+  -- Common failure reasons:
+  -- 1. Rate limit exceeded
+  -- 2. Circuit breaker open
+  -- 3. Player trust score too low
+  -- 4. Packet too large
+  -- 5. Security validation failed
+  warn("Failed to send event. Player may be rate limited.")
+end</code></pre>
+
+        <h3>Performance Considerations</h3>
+        <ul>
+          <li><strong>Batching:</strong> Use <code>FireAllClients</code> for multiple recipients</li>
+          <li><strong>Rate Limiting:</strong> Respect client and server rate limits</li>
+          <li><strong>Packet Size:</strong> Keep payloads under 100KB</li>
+          <li><strong>Frequency:</strong> Avoid high-frequency events (>10/sec)</li>
+          <li><strong>Prioritization:</strong> Use metadata.priority for important events</li>
+        </ul>
+
+        <h3>Example: Game Event System</h3>
+        <pre><code>-- Game event manager using Fire methods
+local GameEvents = {}
+
+function GameEvents:PlayerDamaged(attacker, victim, damage, weapon)
+  -- Notify victim
+  Nexus:FireClient("TakeDamage", victim, {
+    damage = damage,
+    attacker = attacker.Name,
+    weapon = weapon
+  })
+  
+  -- Notify attacker (if different player)
+  if attacker ~= victim and attacker:IsA("Player") then
+    Nexus:FireClient("DealtDamage", attacker, {
+      damage = damage,
+      victim = victim.Name,
+      weapon = weapon
+    })
+  end
+  
+  -- Notify nearby players (excluding involved parties)
+  local nearby = GetNearbyPlayers(victim.Position, 50)
+  for _, player in ipairs(nearby) do
+    if player ~= victim and player ~= attacker then
+      Nexus:FireClient("NearbyDamage", player, {
+        position = victim.Position,
+        damage = damage
+      })
+    end
+  end
 end
 
--- Process table
-processData(tempTable)
+function GameEvents:GlobalAnnouncement(message, type)
+  -- Broadcast to all players
+  Nexus:FireAllClients("GlobalAnnouncement", {
+    message = message,
+    type = type or "info",
+    timestamp = os.time()
+  })
+end
 
--- Release table
-pool:Release("table", tempTable)
+return GameEvents</code></pre>
+      `
+    }
+  ],
 
--- Custom object pool
-local vectorPool = MemoryPool.new()
-vectorPool:Initialize(500)
+  "Invoke Functions": [
+    {
+      "title": "Invoke Methods - Two-way Communication",
+      "content": `
+        <p>Invoke methods provide two-way, synchronous communication with guaranteed responses, suitable for transactions, data fetching, and operations requiring confirmation.</p>
 
-local vector = vectorPool:Acquire("vector3", function()
-    return Vector3.new(0, 0, 0)
+        <h3>Available Methods</h3>
+        <table class="method-table">
+          <tr><th>Method</th><th>Direction</th><th>Return Type</th><th>Use Case</th></tr>
+          <tr><td><code>Invoke</code></td><td>Client → Server</td><td>Promise/any</td><td>Client requesting server action</td></tr>
+          <tr><td><code>InvokeClient</code></td><td>Server → Client</td><td>Promise/any</td><td>Server requesting client data</td></tr>
+          <tr><td><code>InvokeAsync</code></td><td>Any → Any</td><td>Promise</td><td>Promise-based invocation</td></tr>
+          <tr><td><code>BatchInvoke</code></td><td>Any → Any</td><td>Promise[]</td><td>Multiple parallel invocations</td></tr>
+        </table>
+
+        <h3>Invoke (Client to Server)</h3>
+        <pre><code>-- Client-side: Invoke server function
+local result = Nexus:Invoke("PurchaseItem", "sword_01", 1)
+
+-- Structured response
+if result.success then
+  local item = result.data.item
+  local newBalance = result.data.newBalance
+  UI:ShowPurchaseSuccess(item, newBalance)
+else
+  UI:ShowError(result.error, result.code)
+end
+
+-- Error codes include:
+-- "RATE_LIMIT", "TIMEOUT", "SECURITY_ERROR", "VALIDATION_ERROR"
+-- "NO_HANDLER", "CIRCUIT_OPEN", "EXECUTION_ERROR"</code></pre>
+
+        <h3>InvokeClient (Server to Client)</h3>
+        <pre><code>-- Server-side: Request data from client
+local response = Nexus:InvokeClient("GetPlayerSettings", player)
+
+if response.success then
+  local settings = response.data
+  PlayerSettings[player] = settings
+else
+  warn("Failed to get settings from", player.Name, ":", response.error)
+end</code></pre>
+
+        <h3>InvokeAsync (Promise-based)</h3>
+        <pre><code>-- Promise-based invocation with async/await
+Nexus:InvokeAsync("LoadPlayerData")
+  :andThen(function(data)
+    -- Success handler
+    PlayerData:Load(data)
+    UI:ShowLoadingComplete()
+  end)
+  :catch(function(err)
+    -- Error handler
+    UI:ShowError(err.error, err.code)
+    Analytics:RecordError("LoadPlayerData", err)
+  end)
+
+-- With async/await pattern
+local function loadPlayerData()
+  local data = Nexus:InvokeAsync("LoadPlayerData"):await()
+  PlayerData:Load(data)
+  return data
+end</code></pre>
+
+        <h3>BatchInvoke (Parallel Execution)</h3>
+        <pre><code>-- Execute multiple invocations in parallel
+local requests = {
+  {"GetInventory"},
+  {"GetCurrency"},
+  {"GetDailyReward"}
+}
+
+local results = Nexus:BatchInvoke("GetPlayerData", requests)
+
+Promise.all(results)
+  :andThen(function(allResults)
+    local inventory = allResults[1]
+    local currency = allResults[2]
+    local dailyReward = allResults[3]
+    
+    UI:UpdateAll(inventory, currency, dailyReward)
+  end)</code></pre>
+
+        <h3>Response Structure</h3>
+        <pre><code>-- Success response
+{
+  success: true,
+  data: any,           // Handler return value
+  timestamp: number,   // Response time
+  requestId: string,   // Original packet ID
+  signature: string    // Cryptographic signature
+}
+
+-- Error response
+{
+  success: false,
+  error: string,       // Error message
+  code: string,        // Error code
+  timestamp: number,
+  requestId: string
+}</code></pre>
+
+        <h3>Timeout Handling</h3>
+        <pre><code>-- Set per-remote timeout
+Nexus:RegisterRemote("ComplexOperation", "Function", {
+  performance = {
+    timeout = 30  // 30-second timeout
+  }
+})
+
+-- Individual invocation with timeout
+local result = Nexus:Invoke("ComplexOperation", data):timeout(10)  // Override to 10s
+
+-- Timeout error response
+{
+  success: false,
+  error: "Request timeout",
+  code: "TIMEOUT",
+  timestamp: number
+}</code></pre>
+
+        <h3>Circuit Breaker Pattern</h3>
+        <pre><code>-- Automatic circuit breaker integration
+-- After 5 failures, circuit opens for 30 seconds
+-- After 2 successes in half-open state, circuit closes
+
+-- Circuit states:
+-- 1. Closed: Normal operation
+-- 2. Open: Fail-fast, no requests allowed
+-- 3. Half-open: Testing recovery
+
+-- Manual state check
+if Nexus.circuitBreaker:CanExecute("PurchaseItem") then
+  -- Safe to invoke
+  Nexus:Invoke("PurchaseItem", itemId)
+else
+  -- Circuit open, show maintenance message
+  UI:ShowMaintenance()
+end</code></pre>
+
+        <h3>Example: Transaction System</h3>
+        <pre><code>-- Complete purchase flow with error handling
+local PurchaseSystem = {}
+
+function PurchaseSystem:BuyItem(player, itemId)
+  -- Step 1: Validate player can purchase
+  local validation = Nexus:InvokeClient("ValidatePurchase", player, itemId)
+  if not validation.success then return validation end
+  
+  -- Step 2: Process payment (with retry)
+  local paymentResult = self:ProcessPaymentWithRetry(player, itemId)
+  if not paymentResult.success then return paymentResult end
+  
+  -- Step 3: Deliver item
+  local deliveryResult = Inventory:AddItem(player, itemId, 1)
+  if not deliveryResult.success then
+    -- Refund on delivery failure
+    self:RefundPayment(player, itemId)
+    return deliveryResult
+  end
+  
+  -- Step 4: Send confirmation to client
+  Nexus:FireClient("PurchaseComplete", player, {
+    itemId = itemId,
+    transactionId = paymentResult.transactionId
+  })
+  
+  return {
+    success = true,
+    transactionId = paymentResult.transactionId,
+    item = itemId
+  }
+end
+
+function PurchaseSystem:ProcessPaymentWithRetry(player, itemId)
+  local maxRetries = 3
+  local lastError
+  
+  for attempt = 1, maxRetries do
+    local result = Nexus:Invoke("ProcessPayment", player.UserId, itemId)
+    
+    if result.success then
+      return result
+    end
+    
+    lastError = result
+    
+    -- Don't retry on certain errors
+    if result.code == "INSUFFICIENT_FUNDS" then
+      break
+    end
+    
+    -- Wait before retry
+    if attempt < maxRetries then
+      task.wait(1 * attempt)  // Exponential backoff
+    end
+  end
+  
+  return lastError
+end
+
+return PurchaseSystem</code></pre>
+      `
+    }
+  ],
+
+  "Modules": [
+    {
+      "title": "Module System Overview",
+      "content": `
+        <p>Nexus is built on a modular architecture where each component can be used independently or integrated into the main system.</p>
+
+        <h3>Core Modules</h3>
+        <table class="module-table">
+          <tr><th>Module</th><th>Purpose</th><th>Key Features</th></tr>
+          <tr><td>Validator</td><td>Data validation</td><td>Schema validation, type checking, exploit prevention</td></tr>
+          <tr><td>Serializer</td><td>Data serialization</td><td>Compression, encryption, Roblox type support</td></tr>
+          <tr><td>Security</td><td>Security enforcement</td><td>Packet signing, threat detection, trust system</td></tr>
+          <tr><td>RateLimiter</td><td>Rate limiting</td><td>Adaptive limits, violation tracking, distributed support</td></tr>
+          <tr><td>Promise</td><td>Async programming</td><td>Promise/A+ implementation, async/await</td></tr>
+          <tr><td>CircuitBreaker</td><td>Fault tolerance</td><td>Circuit breaker pattern, automatic recovery</td></tr>
+          <tr><td>MemoryPool</td><td>Performance</td><td>Object pooling, memory optimization</td></tr>
+          <tr><td>Analytics</td><td>Monitoring</td><td>Event tracking, performance metrics, error logging</td></tr>
+          <tr><td>Profiler</td><td>Performance analysis</td><td>Execution timing, bottleneck detection</td></tr>
+        </table>
+
+        <h3>Module Integration</h3>
+        <pre><code>-- Using modules independently
+local Validator = require(script.Validator).new()
+local Serializer = require(script.Serializer).new()
+local Security = require(script.Security).new()
+
+-- Configure independently
+Validator:RegisterType("PlayerId", function(v)
+  return type(v) == "number" and v > 0 and v < 1000000000
 end)
 
--- Use vector
-vector = Vector3.new(10, 20, 30)
+-- Use in custom systems
+local function validatePlayerData(data)
+  return Validator:Validate(data, {
+    userId = "PlayerId",
+    username = {type = "string", minLength = 3, maxLength = 20},
+    position = "Vector3"
+  })
+end
 
--- Release
-vectorPool:Release("vector3", vector)`
-    },
-    'validator': {
-        lua: `-- Validator examples
-local Validator = require(ReplicatedStorage.Nexus.validator)
-local validator = Validator.new()
+-- Integrated use with Nexus
+local Nexus = require(script.NexusRemote).new()
+-- All modules are automatically initialized and integrated</code></pre>
 
--- Register custom type
-validator:RegisterType("color3", function(value)
-    return typeof(value) == "Color3"
-end, "Color3 value")
+        <h3>Custom Module Creation</h3>
+        <pre><code>-- Creating a custom module that integrates with Nexus
+local CustomModule = {}
+CustomModule.__index = CustomModule
 
--- Define schema
-validator:RegisterSchema("PlayerUpdate", {
-    position = "Vector3",
-    velocity = "Vector3",
-    health = "number",
-    stamina = "number",
-    color = "color3",  -- Custom type
-    effects = {"string"},
-    metadata = {"table", {
-        lastUpdate = "number",
-        version = "string"
-    }}
+function CustomModule.new()
+  local self = setmetatable({}, CustomModule)
+  self.data = {}
+  return self
+end
+
+function CustomModule:Initialize(nexusInstance)
+  -- Get access to Nexus components
+  self.nexus = nexusInstance
+  self.validator = nexusInstance.validator
+  self.security = nexusInstance.security
+  
+  -- Register with Nexus events
+  self.connection = nexusInstance.SomeEvent:Connect(function(...)
+    self:HandleEvent(...)
+  end)
+  
+  return self
+end
+
+function CustomModule:DoSomething(data)
+  -- Use Nexus validator
+  local valid, err = self.validator:Validate(data, someSchema)
+  if not valid then return false, err end
+  
+  -- Use Nexus security
+  local packet = {data = data}
+  local signed = self.security:SignPacket(packet, "custom_module")
+  
+  -- Process data
+  return self:Process(signed)
+end
+
+-- Register as Nexus plugin
+Nexus:RegisterModule("CustomModule", CustomModule.new())</code></pre>
+
+        <h3>Module Lifecycle</h3>
+        <ol>
+          <li><strong>Initialization:</strong> Modules are created and configured</li>
+          <li><strong>Integration:</strong> Modules are connected to Nexus core</li>
+          <li><strong>Operation:</strong> Modules process data and events</li>
+          <li><strong>Cleanup:</strong> Modules release resources on shutdown</li>
+        </ol>
+      `
+    }
+  ],
+
+  "Validator": [
+    {
+      "title": "Validator Module",
+      "content": `
+        <p>The Validator module provides comprehensive data validation with full Roblox type support, schema validation, and exploit prevention.</p>
+
+        <h3>Core Features</h3>
+        <ul>
+          <li>Complete Roblox type validation (Vector3, CFrame, Color3, etc.)</li>
+          <li>Schema-based validation with nested structures</li>
+          <li>Custom type registration</li>
+          <li>Exploit pattern detection</li>
+          <li>Performance-optimized validation cache</li>
+        </ul>
+
+        <h3>Basic Usage</h3>
+        <pre><code>local Validator = require(script.Validator).new()
+
+-- Simple type validation
+local valid, err = Validator:Validate("hello", "string")
+-- true
+
+valid, err = Validator:Validate(123, "string")
+-- false, "Expected string"
+
+-- With options
+valid, err = Validator:Validate("short", {
+  type = "string",
+  options = {minLength = 5}
 })
+-- false, "String too short (min 5)"</code></pre>
+
+        <h3>Supported Types</h3>
+        <div class="type-grid">
+          <div class="type-category">
+            <h4>Primitive Types</h4>
+            <ul>
+              <li><code>string</code></li>
+              <li><code>number</code></li>
+              <li><code>boolean</code></li>
+              <li><code>table</code></li>
+              <li><code>nil</code></li>
+            </ul>
+          </div>
+          <div class="type-category">
+            <h4>Roblox Math Types</h4>
+            <ul>
+              <li><code>Vector2</code>, <code>Vector3</code></li>
+              <li><code>Vector2int16</code>, <code>Vector3int16</code></li>
+              <li><code>CFrame</code></li>
+              <li><code>Color3</code>, <code>BrickColor</code></li>
+              <li><code>UDim</code>, <code>UDim2</code></li>
+              <li><code>Ray</code>, <code>Region3</code></li>
+            </ul>
+          </div>
+          <div class="type-category">
+            <h4>Roblox Instance Types</h4>
+            <ul>
+              <li><code>Instance</code> (with className filter)</li>
+              <li><code>Player</code>, <code>Model</code></li>
+              <li><code>BasePart</code>, <code>Humanoid</code></li>
+              <li><code>Tool</code>, <code>Camera</code></li>
+              <li><code>RemoteEvent</code>, <code>RemoteFunction</code></li>
+            </ul>
+          </div>
+          <div class="type-category">
+            <h4>Special Types</h4>
+            <ul>
+              <li><code>EnumItem</code> (with enumType filter)</li>
+              <li><code>Axes</code>, <code>Faces</code></li>
+              <li><code>ColorSequence</code>, <code>NumberSequence</code></li>
+              <li><code>NumberRange</code>, <code>Rect</code></li>
+            </ul>
+          </div>
+        </div>
+
+        <h3>Schema Validation</h3>
+        <pre><code>-- Define a schema
+local playerSchema = {
+  userId = "number",
+  username = {
+    type = "string",
+    options = {minLength = 3, maxLength = 20}
+  },
+  position = "Vector3",
+  inventory = {
+    type = "table",
+    options = {
+      schema = {
+        {itemId = "string", quantity = "number"}
+      }
+    }
+  },
+  tags = {"string"},  -- Array of strings
+  metadata = {        -- Dictionary
+    joinTime = "number",
+    lastActive = "number"
+  }
+}
 
 -- Validate data
-local data = {
-    position = Vector3.new(0, 5, 0),
-    velocity = Vector3.new(1, 0, 0),
-    health = 100,
-    stamina = 75,
-    color = Color3.new(1, 0, 0),
-    effects = {"speed", "jump"},
-    metadata = {
-        lastUpdate = os.time(),
-        version = "1.0"
-    }
+local playerData = {
+  userId = 12345,
+  username = "PlayerOne",
+  position = Vector3.new(0, 10, 0),
+  inventory = {
+    {itemId = "sword", quantity = 1},
+    {itemId = "potion", quantity = 3}
+  },
+  tags = {"vip", "beta"},
+  metadata = {
+    joinTime = os.time(),
+    lastActive = os.time()
+  }
 }
 
-local isValid, error = validator:Validate(data, "PlayerUpdate")
-if not isValid then
-    warn("Validation failed:", error)
-end`
+local valid, err = Validator:Validate(playerData, playerSchema)</code></pre>
+
+        <h3>Custom Type Registration</h3>
+        <pre><code>-- Register custom validator
+Validator:RegisterType("PlayerId", function(value, options)
+  if type(value) ~= "number" then
+    return false, "Expected number for PlayerId"
+  end
+  
+  -- Valid Roblox UserId range
+  if value < 1 or value > 1000000000 then
+    return false, "PlayerId out of valid range"
+  end
+  
+  return true
+end, {robust = true, allowNil = false})
+
+-- Register with options support
+Validator:RegisterType("SafeString", function(value, options)
+  options = options or {}
+  local maxLength = options.maxLength or 1000
+  
+  if type(value) ~= "string" then
+    return false, "Expected string"
+  end
+  
+  if #value > maxLength then
+    return false, string.format("String too long (max %d)", maxLength)
+  end
+  
+  -- Prevent injection attacks
+  if value:match("[<>\"'%c]") then
+    return false, "String contains unsafe characters"
+  end
+  
+  return true
+end)
+
+-- Use custom type
+local valid, err = Validator:Validate("safe data", {
+  type = "SafeString",
+  options = {maxLength = 100}
+})</code></pre>
+
+        <h3>Advanced Validation Patterns</h3>
+        <pre><code>-- Union types (multiple possible types)
+local weaponSchema = Validator.typeValidators.Union({
+  Validator.typeValidators.string,
+  Validator.typeValidators.table
+})
+
+-- Optional fields
+local optionalSchema = {
+  username = "string",
+  displayName = Validator.typeValidators.Optional("string")
+}
+
+-- Array validation
+local arraySchema = Validator.typeValidators.Array(
+  function(element)
+    return type(element) == "string" and #element > 0
+  end
+)
+
+-- Dictionary validation
+local dictSchema = Validator.typeValidators.Dictionary(
+  function(key) return type(key) == "string" end,  // Key validator
+  function(value) return type(value) == "number" end // Value validator
+)</code></pre>
+
+        <h3>Exploit Prevention</h3>
+        <pre><code>-- Built-in security validators
+local safeValidators = {
+  SafeString = Validator.typeValidators.SafeString,
+  SafeNumber = Validator.typeValidators.SafeNumber,
+  Position = Validator.typeValidators.Position,
+  Rotation = Validator.typeValidators.Rotation,
+  UserId = Validator.typeValidators.UserId,
+  Timestamp = Validator.typeValidators.Timestamp
+}
+
+-- Example: Validating user input
+local function validateUserInput(input)
+  return Validator:Validate(input, {
+    username = "SafeString",
+    age = {
+      type = "SafeNumber",
+      options = {min = 13, max = 100}
     },
-    'serializer': {
-        lua: `-- Serializer examples
-local Serializer = require(ReplicatedStorage.Nexus.serializer)
-local serializer = Serializer.new()
-
--- Basic serialization
-local data = {
-    playerId = 123,
-    name = "Player1",
-    position = Vector3.new(10, 20, 30),
-    inventory = {
-        {id = 1, name = "Sword", count = 1},
-        {id = 2, name = "Shield", count = 1},
-        {id = 3, name = "Potion", count = 5}
-    }
-}
-
--- Serialize
-local serialized = serializer:Serialize(data)
-print("Serialized size:", #serialized, "bytes")
-
--- Deserialize
-local deserialized = serializer:Deserialize(serialized)
-
--- Compression
-local largeData = {}
-for i = 1, 1000 do
-    largeData[i] = {
-        id = i,
-        name = "Item" .. i,
-        value = math.random(1000)
-    }
+    position = "Position",
+    timestamp = "Timestamp"
+  })
 end
 
--- Compress large data
-local compressed = serializer:Compress(largeData, {
-    algorithm = "lz4",
-    level = 9  -- Maximum compression
+-- Detecting exploit patterns
+local function detectExploits(data)
+  local exploitPatterns = {
+    injection = {"<script>", "</script>", "javascript:", "onload="},
+    rce = {"loadstring", "require%(", "dofile", "debug%."},
+    memory = {"newproxy", "getrawmetatable", "setrawmetatable"}
+  }
+  
+  local json = HttpService:JSONEncode(data)
+  for category, patterns in pairs(exploitPatterns) do
+    for _, pattern in ipairs(patterns) do
+      if json:find(pattern) then
+        return false, string.format("Exploit pattern detected: %s", pattern)
+      end
+    end
+  end
+  
+  return true
+end</code></pre>
+
+        <h3>Performance Optimization</h3>
+        <pre><code>-- Schema caching for repeated validation
+Validator:RegisterSchema("PlayerSchema", playerSchema)
+
+-- Reuse cached schema
+local valid, err = Validator:Validate(data, "PlayerSchema")
+
+-- Batch validation
+local function validateBatch(items, schema)
+  local results = {}
+  for i, item in ipairs(items) do
+    local valid, err = Validator:Validate(item, schema)
+    results[i] = {valid = valid, error = err}
+  end
+  return results
+end
+
+-- Early exit on failure
+local function validateAllRequired(data, schema)
+  for field, fieldSchema in pairs(schema) do
+    if not data[field] then
+      return false, string.format("Missing required field: %s", field)
+    end
+    
+    local valid, err = Validator:Validate(data[field], fieldSchema)
+    if not valid then
+      return false, string.format("Field %s: %s", field, err)
+    end
+  end
+  return true
+end</code></pre>
+
+        <h3>Integration with Nexus</h3>
+        <pre><code>-- Automatic schema validation for remotes
+Nexus:RegisterRemote("UpdatePlayer", "Function", {
+  schema = {
+    position = "Vector3",
+    velocity = "Vector3",
+    timestamp = "Timestamp"
+  }
 })
 
-print("Original:", serializer:EstimateSize(largeData), "bytes")
-print("Compressed:", #compressed, "bytes")
-print("Ratio:", serializer:EstimateSize(largeData) / #compressed)
+-- Manual validation in handlers
+Nexus:On("CustomEvent", function(player, data)
+  -- Validate even if no schema defined
+  local valid, err = Nexus.validator:Validate(data, customSchema)
+  if not valid then
+    return {success = false, error = err}
+  end
+  
+  -- Process valid data
+  return processData(data)
+end)
 
--- Decompress
-local decompressed = serializer:Decompress(compressed)`
-    },
-    'ratelimiter': {
-        lua: `-- RateLimiter examples
-local RateLimiter = require(ReplicatedStorage.Nexus.ratelimiter)
-local rateLimiter = RateLimiter.new()
+-- Validator statistics
+local stats = Validator:GetStats()
+print("Validations performed:", stats.validationCount)
+print("Cache hit rate:", stats.cacheHitRate)</code></pre>
+      `
+    }
+  ],
 
--- Setup limits
-rateLimiter:Initialize({
+  "Serializer": [
+    {
+      "title": "Serializer Module",
+      "content": `
+        <p>The Serializer module provides advanced serialization with compression, encryption, and full Roblox type support for efficient network transmission.</p>
+
+        <h3>Core Features</h3>
+        <ul>
+          <li>Multi-strategy serialization (JSON, Binary, Custom)</li>
+          <li>Built-in compression algorithms (RLE, Dictionary, LZ4)</li>
+          <li>Roblox type serialization (Vector3, CFrame, Color3, etc.)</li>
+          <li>Performance caching and memory pooling</li>
+          <li>Encryption and obfuscation support</li>
+        </ul>
+
+        <h3>Basic Usage</h3>
+        <pre><code>local Serializer = require(script.Serializer).new()
+
+-- Simple serialization
+local data = {name = "Player", score = 100, position = Vector3.new(0, 5, 0)}
+local serialized = Serializer:Serialize(data)
+-- Returns: Serialized string or table
+
+-- Deserialization
+local deserialized = Serializer:Deserialize(serialized)
+-- Returns: Original data structure
+
+-- With compression
+local compressed = Serializer:Serialize(data, {
+  strategy = "json",
+  compress = true,
+  cache = true
+})</code></pre>
+
+        <h3>Serialization Strategies</h3>
+        <table class="strategy-table">
+          <tr><th>Strategy</th><th>Format</th><th>Best For</th><th>Limitations</th></tr>
+          <tr><td>json</td><td>JSON string</td><td>Compatibility, readability</td><td>No functions/threads</td></tr>
+          <tr><td>binary</td><td>Custom binary</td><td>Roblox types, performance</td><td>Complex structures</td></tr>
+          <tr><td>string</td><td>String representation</td><td>Simple data, debugging</td><td>Loss of type information</td></tr>
+        </table>
+
+        <h3>Compression Algorithms</h3>
+        <pre><code>-- Available compression methods
+local algorithms = {
+  "rle",        // Run-Length Encoding (repeated values)
+  "dictionary", // Pattern dictionary (JSON data)
+  "lz4",        // LZ4 compression (large data)
+  "base64",     // Base64 encoding (binary safety)
+  "obfuscate"   // Light obfuscation (not encryption)
+}
+
+-- Auto-select best compression
+local compressed, algorithm = Serializer:Compress(data, "auto")
+
+-- Manual selection
+local rleCompressed = Serializer:Compress(data, "rle")
+local dictCompressed = Serializer:Compress(data, "dictionary")
+
+-- Decompression
+local original = Serializer:Decompress(compressed, algorithm)</code></pre>
+
+        <h3>Roblox Type Support</h3>
+        <pre><code>-- Full Roblox type serialization
+local complexData = {
+  position = Vector3.new(10, 20, 30),
+  rotation = CFrame.new(0, 0, 0),
+  color = Color3.new(1, 0.5, 0),
+  udim = UDim2.new(0.5, 0, 0.5, 0),
+  range = NumberRange.new(0, 100),
+  players = {player1, player2}  // Instance references
+}
+
+local serialized = Serializer:Serialize(complexData, {
+  strategy = "binary"  // Required for Roblox types
+})
+
+-- Custom type registration
+Serializer:RegisterType("Weapon", 
+  function(weaponInstance)
+    -- Serialize to lightweight representation
+    return {
+      id = weaponInstance:GetAttribute("WeaponId"),
+      damage = weaponInstance:GetAttribute("Damage"),
+      owner = weaponInstance:GetAttribute("Owner")
+    }
+  end,
+  function(data)
+    -- Deserialize back to game object
+    return Weapons:GetWeapon(data.id)
+  end
+)</code></pre>
+
+        <h3>Performance Features</h3>
+        <pre><code>-- Size estimation
+local size = Serializer:EstimateSize(data)
+print("Estimated size:", size, "bytes")
+
+-- Compression threshold (auto-compress if > threshold)
+local optimized = Serializer:Serialize(data, {
+  compress = true,
+  threshold = 512  // Auto-compress if > 512 bytes
+})
+
+-- Caching for repeated serialization
+local cached = Serializer:Serialize(data, {cache = true})
+// Subsequent calls with same data return cached result
+
+-- Memory pooling integration
+local pool = MemoryPool.new()
+pool:Initialize(1000)
+
+local function serializeWithPool(data)
+  local serialized = pool:Acquire("serialized", function()
+    return Serializer:Serialize(data)
+  end)
+  
+  -- Use serialized data
+  
+  pool:Release("serialized", serialized)
+end</code></pre>
+
+        <h3>Security Features</h3>
+        <pre><code>-- Data obfuscation (light security)
+local obfuscated = Serializer:Serialize(data, {
+  strategy = "json",
+  compress = "obfuscate"
+})
+
+-- Checksum verification
+local function createChecksum(data)
+  local serialized = Serializer:Serialize(data)
+  local checksum = 0
+  for i = 1, #serialized do
+    checksum = (checksum + string.byte(serialized, i)) % 256
+  end
+  return checksum
+end
+
+-- Tamper detection
+local function verifyData(data, originalChecksum)
+  local currentChecksum = createChecksum(data)
+  return currentChecksum == originalChecksum
+end</code></pre>
+
+        <h3>Advanced Usage</h3>
+        <pre><code>-- Custom serialization strategy
+Serializer.strategies.custom = {
+  serialize = function(data)
+    -- Custom serialization logic
+    local result = {}
+    for k, v in pairs(data) do
+      if type(v) == "Vector3" then
+        result[k] = {type = "Vector3", x = v.X, y = v.Y, z = v.Z}
+      else
+        result[k] = v
+      end
+    end
+    return HttpService:JSONEncode(result)
+  end,
+  deserialize = function(data)
+    local decoded = HttpService:JSONDecode(data)
+    local result = {}
+    for k, v in pairs(decoded) do
+      if type(v) == "table" and v.type == "Vector3" then
+        result[k] = Vector3.new(v.x, v.y, v.z)
+      else
+        result[k] = v
+      end
+    end
+    return result
+  end
+}
+
+-- Streaming serialization for large data
+local function serializeInChunks(data, chunkSize)
+  local chunks = {}
+  local serialized = Serializer:Serialize(data)
+  
+  for i = 1, #serialized, chunkSize do
+    local chunk = serialized:sub(i, i + chunkSize - 1)
+    table.insert(chunks, chunk)
+  end
+  
+  return chunks
+end
+
+-- Delta serialization (only changes)
+local lastState = {}
+local function serializeDelta(newState)
+  local delta = {}
+  for k, v in pairs(newState) do
+    if not deepCompare(v, lastState[k]) then
+      delta[k] = v
+    end
+  end
+  
+  lastState = deepCopy(newState)
+  return Serializer:Serialize(delta)
+end</code></pre>
+
+        <h3>Integration with Nexus</h3>
+        <pre><code>-- Automatic serialization in Nexus packets
+local packet = {
+  id = "packet_123",
+  data = Nexus.serializer:Serialize(payload, {
+    compress = true,
+    strategy = "binary"
+  }),
+  compression = "lz4"
+}
+
+-- Custom serialization for specific remotes
+Nexus:RegisterRemote("StreamData", "Event", {
+  performance = {
+    compression = true,
+    compressionThreshold = 1024  // Compress if > 1KB
+  }
+})
+
+-- Monitoring and statistics
+local stats = Nexus.serializer:GetStats()
+print("Compression ratio:", stats.compressionRatio)
+print("Cache hits:", stats.cacheHits)
+print("Total bytes saved:", stats.totalBytesIn - stats.totalBytesOut)</code></pre>
+      `
+    }
+  ],
+
+  "Security": [
+    {
+      "title": "Security Module",
+      "content": `
+        <p>The Security module provides enterprise-grade security features including packet signing, threat detection, trust systems, and exploit prevention.</p>
+
+        <h3>Core Features</h3>
+        <ul>
+          <li>Cryptographic packet signing and verification</li>
+          <li>Master key management with automatic rotation</li>
+          <li>Player trust scoring and session management</li>
+          <li>Exploit pattern detection and prevention</li>
+          <li>Violation tracking and automatic banning</li>
+          <li>Replay attack prevention with nonce tracking</li>
+        </ul>
+
+        <h3>Initialization</h3>
+        <pre><code>local Security = require(script.Security).new()
+
+-- Initialize with configuration
+Security:Initialize({
+  threatDetection = true,
+  autoBanThreshold = 10,
+  packetTTL = 10,
+  sessionTimeout = 300,
+  debug = false
+})
+
+-- Server-only master key initialization
+if RunService:IsServer() then
+  Security:_InitializeMasterKey()
+  // Generates cryptographically strong key using:
+  // - Random GUID
+  // - Server startup time
+  // - Game JobId
+  // - PlaceId
+  // - Additional entropy
+end</code></pre>
+
+        <h3>Packet Security</h3>
+        <pre><code>-- Signing packets
+local packet = {
+  id = "packet_123",
+  timestamp = os.clock(),
+  data = {action = "jump", height = 10}
+}
+
+local signature = Security:SignPacket(packet, player)
+// packet.signature = "hash:timestamp:keyVersion"
+
+-- Verifying packets
+local isValid = Security:VerifyPacket(packet, player)
+if not isValid then
+  -- Security violation detected
+  Security:RecordViolation(player, "Invalid packet signature")
+  return false
+end
+
+-- Checksum calculation
+local checksum = Security:CalculateChecksum(packet)
+packet.checksum = checksum</code></pre>
+
+        <h3>Player Management</h3>
+        <pre><code>-- Initialize player security context
+Security:InitializePlayer(player)
+// Creates:
+// - Trust score based on account age
+// - Session token
+// - Violation tracking
+
+-- Session management
+local sessionId = Security:CreateSession(player)
+// Generates unique session with expiration
+
+local isValid = Security:ValidateSession(sessionId, player)
+// Validates session and updates last activity
+
+-- Trust scoring
+local trustScore = Security:GetTrustScore(player)
+// Based on: account age, violations, behavior
+
+Security:SetTrustScore(player, 0.8)  // Manual adjustment
+Security:_UpdateTrustScore(player, -0.1)  // Penalty
+Security:_UpdateTrustScore(player, 0.05)  // Reward</code></pre>
+
+        <h3>Threat Detection</h3>
+        <pre><code>-- Exploit pattern detection
+local exploitPatterns = {
+  injection = {"<script>", "</script>", "javascript:", "onload="},
+  rce = {"loadstring", "require%(", "dofile", "debug%."},
+  memory = {"newproxy", "getrawmetatable", "setrawmetatable"},
+  network = {"FireServer", "InvokeServer", "GetChildren"},
+  recursive = {"__index", "__newindex", "__call"}
+}
+
+-- Automatic detection
+local hasExploit, pattern = Security:_DetectExploitPatterns(packet)
+if hasExploit then
+  Security:RecordViolation(player, remoteName, 
+    "Exploit pattern: " .. pattern)
+  return false
+end
+
+-- Suspicious activity tracking
+Security:RecordSuspiciousActivity(player, remoteName, reason)
+// Records for analysis, small trust penalty</code></pre>
+
+        <h3>Violation System</h3>
+        <pre><code>-- Recording violations
+Security:RecordViolation(player, remoteName, "Rate limit exceeded")
+// Effects:
+// - Increments violation count
+// - Reduces trust score
+// - Logs to analytics
+// - Triggers auto-ban at threshold
+
+-- Auto-ban system
+// After autoBanThreshold violations (default 10):
+// 1. Player added to blacklist
+// 2. Kicked with security message
+// 3. Event logged for review
+
+-- Manual moderation
+Security:FlagPlayer(player, "Suspicious behavior")
+Security:WhitelistPlayer(player)  // Manual override
+Security:BlacklistPlayer(player, duration, reason)</code></pre>
+
+        <h3>Advanced Security Features</h3>
+        <pre><code>-- Key rotation (server-only)
+if Security.config.enableKeyRotation then
+  // Automatic rotation every KEY_ROTATION_INTERVAL (1 hour)
+  // Previous keys retained for 5 minutes during transition
+end
+
+-- Nonce tracking (replay attack prevention)
+local nonce = HttpService:GenerateGUID(false)
+packet.nonce = nonce
+
+local isReplay = Security:_IsReplayAttack(nonce, player)
+if isReplay then
+  Security:RecordViolation(player, nil, "Replay attack")
+  return false
+end
+
+-- Packet validation
+local isValid = Security:ValidatePacket(packet, player, remoteName)
+// Checks:
+// 1. Structure validation
+// 2. TTL expiration
+// 3. Size limits
+// 4. Nonce validity
+// 5. Session validation
+// 6. Data structure depth
+// 7. Exploit patterns</code></pre>
+
+        <h3>Monitoring and Reporting</h3>
+        <pre><code>-- Security report
+local report = Security:GenerateReport({
+  detailed = true,
+  player = player  // Optional player-specific report
+})
+
+// Returns:
+// - Summary statistics
+// - Player trust scores
+// - Violation counts
+// - Session information
+// - Threat patterns
+
+-- Real-time monitoring
+// All security events are logged to Analytics module
+// Can be integrated with external monitoring systems
+
+-- Debug information
+if Security.config.debug then
+  print("[Security] Packet signed by:", packet.metadata.sender)
+  print("[Security] Trust score:", Security:GetTrustScore(player))
+  print("[Security] Violations:", #Security.violations)
+end</code></pre>
+
+        <h3>Integration with Nexus</h3>
+        <pre><code>-- Automatic security in Nexus
+local Nexus = require(script.NexusRemote).new()
+
+-- Security is automatically initialized and integrated
+// All packets are validated and signed
+// Player sessions are managed automatically
+// Violations are tracked and enforced
+
+-- Custom security policies
+Nexus:RegisterRemote("AdminCommand", "Function", {
+  security = {
+    requireAuth = true,
+    whitelist = {123456, 789012},  // Admin UserIds
+    requireSignature = true,
+    maxSize = 1024
+  }
+})
+
+-- Security middleware
+Nexus:UseMiddleware("security", function(context)
+  local player = context.player
+  local packet = context.packet
+  
+  -- Custom security checks
+  if not Security:IsPlayerWhitelisted(player) then
+    return false, "Player not authorized"
+  end
+  
+  if Security:GetTrustScore(player) < 0.7 then
+    return false, "Insufficient trust score"
+  end
+  
+  return true
+end)</code></pre>
+      `
+    }
+  ],
+
+  "RateLimiter": [
+    {
+      "title": "RateLimiter Module",
+      "content": `
+        <p>The RateLimiter module provides sophisticated rate limiting with adaptive limits, violation tracking, and distributed support for high-scale environments.</p>
+
+        <h3>Core Features</h3>
+        <ul>
+          <li>Dual-layer rate limiting (client + server)</li>
+          <li>Adaptive limits based on behavior</li>
+          <li>Violation tracking and trust scoring</li>
+          <li>Distributed rate limiting with MemoryStore</li>
+          <li>Burst allowance and grace periods</li>
+          <li>Detailed statistics and monitoring</li>
+        </ul>
+
+        <h3>Initialization</h3>
+        <pre><code>local RateLimiter = require(script.RateLimiter).new()
+
+-- Initialize with options
+RateLimiter:Initialize({
+  memoryStore = MemoryStoreService:GetSortedMap("RateLimits"),
+  adaptive = true
+})
+
+-- Configure adaptive behavior
+RateLimiter.adaptiveConfig = {
+  baseMultiplier = 1.0,
+  minMultiplier = 0.1,      // 10% of normal rate
+  maxMultiplier = 5.0,      // 500% of normal rate
+  decayRate = 0.99,         // Trust decay per minute
+  recoveryRate = 1.01,      // Trust recovery per minute
+  violationPenalty = 0.8,   // 20% reduction per violation
+  successBonus = 1.01,      // 1% increase per success
+  minRequestsForAdaptive = 10,
+  updateInterval = 60       // Update every minute
+}</code></pre>
+
+        <h3>Setting Limits</h3>
+        <pre><code>-- Configure rate limits for a remote
+RateLimiter:SetLimit("PlayerJumped", {
+  client = 10,     // 10 calls per window client-side
+  server = 100,    // 100 calls per window server-side
+  window = 1,      // 1-second window
+  adaptive = true, // Use adaptive limiting
+  burst = 15       // Allow 15 calls as burst (150% of limit)
+})
+
+-- Multiple limit types
+// 1. Client-side: Global client limits
+// 2. Server-side: Per-player limits
+// 3. Global: Across all players (server-wide)</code></pre>
+
+        <h3>Checking Limits</h3>
+        <pre><code>-- Simple check (returns boolean)
+local canProceed = RateLimiter:CheckLimit("client", "PlayerJumped")
+if not canProceed then
+  return false, "Rate limit exceeded"
+end
+
+-- Detailed check (returns boolean + wait time)
+local canProceed, waitTime = RateLimiter:CheckLimitDetailed(
+  "server", 
+  "player:12345:PlayerJumped"
+)
+
+if not canProceed then
+  return false, string.format("Wait %.2f seconds", waitTime)
+end
+
+-- Player-specific checking
+local canProceed = RateLimiter:CheckPlayerLimit(player, "PlayerJumped")
+local canProceed, waitTime = RateLimiter:CheckPlayerLimitDetailed(
+  player, 
+  "PlayerJumped"
+)</code></pre>
+
+        <h3>Adaptive Rate Limiting</h3>
+        <pre><code>-- Adaptive multiplier based on behavior
+// Good behavior increases limits (up to maxMultiplier)
+// Violations decrease limits (down to minMultiplier)
+// Automatic recovery over time
+
+-- Example adaptive progression:
+// 1. New player: multiplier = 1.0 (100%)
+// 2. Good behavior (10 successes): multiplier = 1.1 (110%)
+// 3. Excellent behavior (100 successes): multiplier = 1.5 (150%)
+// 4. Violation: multiplier = 0.8 (80%)
+// 5. Multiple violations: multiplier = 0.1 (10%)
+
+-- Time-based adjustments
+// Multipliers decay toward 1.0 over time
+// Violation penalties recover over time
+// Configurable decay/recovery rates</code></pre>
+
+        <h3>Violation Tracking</h3>
+        <pre><code>-- Get violation level (0-5 scale)
+local level = RateLimiter:GetViolationLevel("PlayerJumped")
+// 0: No violations
+// 1: 1 violation in last minute
+// 2: 2-4 violations
+// 3: 5-9 violations
+// 4: 10-19 violations
+// 5: 20+ violations
+
+-- Player statistics
+local stats = RateLimiter:GetPlayerStats(player)
+// Returns: totalCalls, violations, trustScore, limitedRemotes
+
+-- Global statistics
+local globalStats = RateLimiter:GetGlobalStats()
+// Returns: totalRemotes, totalPlayers, activePlayers, 
+// totalCalls, totalViolations, avgTrustScore</code></pre>
+
+        <h3>Distributed Rate Limiting</h3>
+        <pre><code>-- Using MemoryStore for multi-server environments
+if MemoryStoreService then
+  RateLimiter:Initialize({
     memoryStore = MemoryStoreService:GetSortedMap("NexusRateLimits")
-})
+  })
+end
 
--- Set per-remote limits
-rateLimiter:SetLimit("PlayerChat", {
-    client = 10,   -- 10 messages per window
-    server = 100,  -- 100 messages per window server-side
-    window = 1,    -- 1 second window
-    adaptive = true
-})
+-- Distributed tracking ensures:
+// 1. Consistent limits across servers
+// 2. Shared violation tracking
+// 3. Coordinated adaptive behavior
+// 4. Centralized statistics</code></pre>
 
-rateLimiter:SetLimit("PlayerMove", {
-    client = 60,   -- 60 updates per second
-    server = 1000, -- 1000 updates per second server-side
+        <h3>Management and Monitoring</h3>
+        <pre><code>-- Reset player limits
+RateLimiter:ResetPlayer(player)  // All remotes
+RateLimiter:ResetPlayer(player, "PlayerJumped")  // Specific remote
+
+-- Cleanup player data
+RateLimiter:CleanupPlayer(player)
+// Removes all tracking data when player leaves
+
+-- Reset everything
+RateLimiter:ResetAll()
+// Clears all limits, violations, and player data
+
+-- Get detailed statistics
+local stats = RateLimiter:GetStats("PlayerJumped")
+// Returns: client limits, server limits, global limits, violations
+
+local allStats = RateLimiter:GetStats()
+// Returns: all limits, violations, player count, adaptive mode</code></pre>
+
+        <h3>Integration with Nexus</h3>
+        <pre><code>-- Automatic rate limiting in Nexus
+local Nexus = require(script.NexusRemote).new()
+
+// All remotes automatically get rate limiting
+// Violations are tracked and affect trust scores
+// Adaptive limits adjust based on player behavior
+
+-- Custom rate limit configuration
+Nexus:RegisterRemote("ChatMessage", "Event", {
+  rateLimit = {
+    client = 5,      // 5 messages per second client-side
+    server = 20,     // 20 messages per second server-side
     window = 1,
     adaptive = true
+  }
 })
 
--- Check limits in handler
-nexus:On("PlayerChat", function(player, message)
-    local limitKey = "player:" .. player.UserId .. ":PlayerChat"
-    
-    local canProceed, waitTime = rateLimiter:CheckLimitDetailed("server", limitKey)
-    
-    if not canProceed then
-        -- Rate limit exceeded
-        security:RecordSuspiciousActivity(player, "PlayerChat", "Rate limit exceeded")
-        
-        -- Get violation level
-        local violationLevel = rateLimiter:GetViolationLevel(limitKey)
-        
-        if violationLevel > 3 then
-            security:RecordViolation(player, "PlayerChat", "Excessive rate limiting")
-        end
-        
-        return {
-            success = false,
-            error = "Rate limit exceeded",
-            code = "RATE_LIMIT",
-            retryAfter = waitTime
-        }
-    end
-    
-    -- Process chat message
-    return {success = true}
-end)
+-- Manual rate limit checks
+if not Nexus.rateLimiter:CheckPlayerLimit(player, "ChatMessage") then
+  Nexus.security:RecordViolation(player, "ChatMessage", "Rate limit")
+  return false
+end
 
--- Global rate limiting
-rateLimiter:SetGlobalLimit("all_events", {
-    server = 10000,  -- 10k events per second total
-    window = 1
-})`
-    },
-    'promise': {
-        lua: `-- Promise examples
-local Promise = require(ReplicatedStorage.Nexus.promise)
+-- Monitoring rate limit violations
+local violationLevel = Nexus.rateLimiter:GetViolationLevel(
+  "player:" .. player.UserId .. ":ChatMessage"
+)
 
--- Basic promise
+if violationLevel >= 3 then
+  -- High violation level, take action
+  Nexus.security:FlagPlayer(player, "Chat spam")
+end</code></pre>
+      `
+    }
+  ],
+
+  "Promise": [
+    {
+      "title": "Promise Module",
+      "content": `
+        <p>The Promise module provides a robust Promise/A+ implementation with async/await support for asynchronous programming in Roblox.</p>
+
+        <h3>Core Features</h3>
+        <ul>
+          <li>Full Promise/A+ specification compliance</li>
+          <li>Async/await pattern support</li>
+          <li>Timeout handling and cancellation</li>
+          <li>Promise chaining and composition</li>
+          <li>Static methods (all, race, resolve, reject)</li>
+          <li>Error propagation and recovery</li>
+        </ul>
+
+        <h3>Basic Usage</h3>
+        <pre><code>local Promise = require(script.Promise)
+
+-- Creating a promise
 local promise = Promise.new(function(resolve, reject)
-    task.wait(1)
-    
-    local success = math.random() > 0.5
-    
-    if success then
-        resolve("Operation succeeded!")
-    else
-        reject("Operation failed")
-    end
+  task.wait(2)  // Simulate async operation
+  local success, result = pcall(someAsyncFunction)
+  
+  if success then
+    resolve(result)
+  else
+    reject(result)
+  end
 end)
 
--- Chain promises
+-- Promise chaining
 promise
-    :andThen(function(result)
-        print("Success:", result)
-        return "Processed: " .. result
-    end)
-    :andThen(function(processed)
-        print("Processed:", processed)
-        return Promise.new(function(resolve)
-            task.wait(0.5)
-            resolve("Final result")
-        end)
-    end)
-    :andThen(function(final)
-        print("Final:", final)
-    end)
-    :catch(function(error)
-        warn("Error occurred:", error)
-    end)
-    :finally(function()
-        print("Promise chain completed")
-    end)
+  :andThen(function(value)
+    print("Success:", value)
+    return processValue(value)
+  end)
+  :catch(function(error)
+    warn("Error:", error)
+    return fallbackValue
+  end)
+  :andThen(function(finalValue)
+    print("Final result:", finalValue)
+  end)</code></pre>
 
--- Multiple promises
+        <h3>Async/Await Pattern</h3>
+        <pre><code>-- Using await for synchronous-style async code
+local function fetchPlayerData(playerId)
+  local promise = Promise.new(function(resolve, reject)
+    local data = DataStore:GetAsync("player_" .. playerId)
+    if data then
+      resolve(data)
+    else
+      reject("Player data not found")
+    end
+  end)
+  
+  return promise
+end
+
+-- In an async context
+local function loadPlayer(playerId)
+  local data = fetchPlayerData(playerId):await()
+  Player:LoadData(data)
+  return data
+end
+
+-- Error handling with await
+local function safeLoad(playerId)
+  local success, data = pcall(function()
+    return fetchPlayerData(playerId):await()
+  end)
+  
+  if not success then
+    warn("Failed to load player:", data)
+    return defaultPlayerData
+  end
+  
+  return data
+end</code></pre>
+
+        <h3>Promise Composition</h3>
+        <pre><code>-- Promise.all (wait for all)
 local promises = {
-    Promise.new(function(resolve)
-        task.wait(0.1)
-        resolve("Promise 1")
-    end),
-    Promise.new(function(resolve)
-        task.wait(0.2)
-        resolve("Promise 2")
-    end),
-    Promise.new(function(resolve)
-        task.wait(0.3)
-        resolve("Promise 3")
-    end)
+  fetchPlayerData(1),
+  fetchPlayerData(2),
+  fetchPlayerData(3)
 }
 
 Promise.all(promises)
-    :andThen(function(results)
-        print("All promises completed:", results)
+  :andThen(function(allData)
+    print("All players loaded:", #allData)
+  end)
+  :catch(function(error)
+    warn("One or more players failed to load:", error)
+  end)
+
+-- Promise.race (first to complete)
+Promise.race({fastOperation(), slowOperation()})
+  :andThen(function(firstResult)
+    print("First completed:", firstResult)
+  end)
+
+-- Promise.resolve/reject
+Promise.resolve("Immediate value")
+  :andThen(print)  // Prints: Immediate value
+
+Promise.reject("Error message")
+  :catch(warn)     // Warns: Error message</code></pre>
+
+        <h3>Timeout and Cancellation</h3>
+        <pre><code>-- Timeout handling
+fetchPlayerData(playerId)
+  :timeout(5, "Request timed out after 5 seconds")
+  :andThen(function(data)
+    // Process data
+  end)
+  :catch(function(error)
+    if error:find("timed out") then
+      // Handle timeout specifically
+      UI:ShowTimeoutMessage()
+    else
+      // Handle other errors
+      warn("Other error:", error)
+    end
+  end)
+
+-- Manual cancellation pattern
+function cancellableOperation()
+  local cancelled = false
+  
+  local promise = Promise.new(function(resolve, reject)
+    local connection
+    connection = someEvent:Connect(function(...)
+      if cancelled then
+        connection:Disconnect()
+        reject("Cancelled")
+        return
+      end
+      
+      resolve(...)
     end)
+  end)
+  
+  return {
+    promise = promise,
+    cancel = function()
+      cancelled = true
+    end
+  }
+end</code></pre>
 
-Promise.race(promises)
-    :andThen(function(first)
-        print("First promise completed:", first)
-    end)
-
--- Async/await pattern
-local function asyncOperation()
-    return Promise.new(function(resolve)
-        task.wait(1)
-        resolve("Async result")
-    end)
-end
-
--- Using :await()
-local result = asyncOperation():await()
-print("Await result:", result)
-
--- Error handling with :await()
-local success, result = pcall(function()
-    return Promise.reject("Intentional error"):await()
+        <h3>Error Handling Patterns</h3>
+        <pre><code>-- Try/catch pattern
+Promise.new(function(resolve, reject)
+  local success, result = pcall(riskyOperation)
+  if success then
+    resolve(result)
+  else
+    reject(result)
+  end
 end)
 
-if not success then
-    warn("Caught error:", result)
-end`
-    },
-    'circuitbreaker': {
-        lua: `-- CircuitBreaker examples
-local CircuitBreaker = require(ReplicatedStorage.Nexus.circuitbreaker)
-local circuitBreaker = CircuitBreaker.new()
+-- Error recovery
+fetchData()
+  :catch(function(error)
+    warn("Primary source failed:", error)
+    return fetchFromBackup()  // Fallback
+  end)
+  :andThen(processData)
 
--- Configure circuit breakers
-circuitBreaker:Configure("DataService", {
-    failureThreshold = 5,      -- 5 failures opens circuit
-    resetTimeout = 30,         -- 30 seconds to try reset
-    halfOpenMaxAttempts = 3,   -- 3 attempts in half-open
-    failureWindow = 60         -- Count failures over 60 seconds
-})
-
-circuitBreaker:Configure("AuthService", {
-    failureThreshold = 3,
-    resetTimeout = 60,
-    halfOpenMaxAttempts = 1
-})
-
--- Usage pattern
-function callWithCircuitBreaker(serviceName, callback)
-    if not circuitBreaker:CanExecute(serviceName) then
-        return {
-            success = false,
-            error = "Circuit breaker open",
-            code = "CIRCUIT_OPEN",
-            service = serviceName
-        }
+-- Retry pattern
+function withRetry(operation, maxRetries, delay)
+  return Promise.new(function(resolve, reject)
+    local attempts = 0
+    
+    local function attempt()
+      attempts = attempts + 1
+      
+      operation()
+        :andThen(resolve)
+        :catch(function(error)
+          if attempts >= maxRetries then
+            reject(string.format("Failed after %d attempts: %s", 
+                   attempts, error))
+          else
+            task.wait(delay * attempts)  // Exponential backoff
+            attempt()
+          end
+        end)
     end
     
-    local success, result = pcall(callback)
+    attempt()
+  end)
+end</code></pre>
+
+        <h3>Utility Functions</h3>
+        <pre><code>-- Promise.defer() (deferred promise)
+local promise, resolve, reject = Promise.defer()
+
+// Use resolve/reject later
+task.spawn(function()
+  task.wait(1)
+  resolve("Done!")
+end)
+
+-- Promise.yield() (yield promise)
+Promise.yield(0.5):await()  // Equivalent to task.wait(0.5)
+
+-- Promise.promisify() (callback to promise)
+local oldStyleFunction = function(callback)
+  task.wait(1)
+  callback("result")
+end
+
+local promisedFunction = Promise.promisify(oldStyleFunction)
+promisedFunction():andThen(print)  // Prints: result</code></pre>
+
+        <h3>Integration with Nexus</h3>
+        <pre><code>-- Nexus uses Promises for all async operations
+local Nexus = require(script.NexusRemote).new()
+
+-- InvokeAsync returns a Promise
+Nexus:InvokeAsync("GetInventory")
+  :andThen(function(inventory)
+    UI:DisplayInventory(inventory)
+  end)
+  :catch(function(error)
+    UI:ShowError(error.error)
+  end)
+
+-- Batch operations with Promise.all
+local promises = {
+  Nexus:InvokeAsync("GetStats"),
+  Nexus:InvokeAsync("GetAchievements"),
+  Nexus:InvokeAsync("GetFriends")
+}
+
+Promise.all(promises)
+  :andThen(function(results)
+    local stats, achievements, friends = unpack(results)
+    Profile:Update(stats, achievements, friends)
+  end)
+
+-- Timeout integration
+Nexus:Invoke("ComplexOperation", data)
+  :timeout(10)
+  :andThen(handleSuccess)
+  :catch(function(error)
+    if error:find("timed out") then
+      // Handle Nexus timeout
+    end
+  end)</code></pre>
+      `
+    }
+  ],
+
+  "CircuitBreaker": [
+    {
+      "title": "CircuitBreaker Module",
+      "content": `
+        <p>The CircuitBreaker module implements the circuit breaker pattern to prevent system overload and provide graceful degradation.</p>
+
+        <h3>Core Features</h3>
+        <ul>
+          <li>Circuit breaker pattern implementation</li>
+          <li>Automatic state transitions (closed → open → half-open)</li>
+          <li>Configurable failure and success thresholds</li>
+          <li>Timeout-based automatic recovery</li>
+          <li>State monitoring and statistics</li>
+        </ul>
+
+        <h3>Circuit States</h3>
+        <div class="mermaid">
+          stateDiagram-v2
+            [*] --> Closed
+            Closed --> Open: Failures >= threshold
+            Open --> HalfOpen: Timeout elapsed
+            HalfOpen --> Closed: Successes >= threshold
+            HalfOpen --> Open: Failure occurs
+            Closed --> [*]: Normal operation
+        </div>
+
+        <table class="state-table">
+          <tr><th>State</th><th>Behavior</th><th>Transitions To</th></tr>
+          <tr><td>Closed</td><td>Normal operation, all requests pass</td><td>Open (on failure threshold)</td></tr>
+          <tr><td>Open</td><td>Fail-fast, no requests pass</td><td>Half-open (after timeout)</td></tr>
+          <tr><td>Half-open</td><td>Test requests, limited traffic</td><td>Closed (on success) or Open (on failure)</td></tr>
+        </table>
+
+        <h3>Basic Usage</h3>
+        <pre><code>local CircuitBreaker = require(script.CircuitBreaker).new()
+
+-- Configure circuit breaker
+CircuitBreaker.config = {
+  failureThreshold = 5,   // Open after 5 failures
+  successThreshold = 2,   // Close after 2 successes in half-open
+  timeout = 30            // Stay open for 30 seconds
+}
+
+-- Check if operation can proceed
+local canExecute = CircuitBreaker:CanExecute("PurchaseService")
+if not canExecute then
+  return {success = false, error = "Service temporarily unavailable"}
+end
+
+-- Record operation outcome
+local success, result = pcall(purchaseFunction)
+if success then
+  CircuitBreaker:RecordSuccess("PurchaseService")
+else
+  CircuitBreaker:RecordFailure("PurchaseService")
+end</code></pre>
+
+        <h3>State Management</h3>
+        <pre><code>-- Manual state checking
+local breaker = CircuitBreaker.breakers["PurchaseService"]
+if breaker then
+  print("Current state:", breaker.state)  // closed, open, or half-open
+  print("Failure count:", breaker.failures)
+  print("Success count:", breaker.successes)
+  print("Last failure:", breaker.lastFailure)
+end
+
+-- Automatic state transitions
+// 1. Closed → Open: When failures >= failureThreshold
+// 2. Open → Half-open: After timeout seconds
+// 3. Half-open → Closed: When successes >= successThreshold
+// 4. Half-open → Open: On any failure
+
+-- Manual state override (for maintenance)
+CircuitBreaker.breakers["PurchaseService"] = {
+  state = "open",
+  failures = 0,
+  successes = 0,
+  lastFailure = os.clock(),
+  manualOverride = true
+}</code></pre>
+
+        <h3>Integration Patterns</h3>
+        <pre><code>-- Wrapping functions with circuit breaker
+function withCircuitBreaker(name, operation, fallback)
+  return function(...)
+    if not CircuitBreaker:CanExecute(name) then
+      if fallback then
+        return fallback(...)
+      end
+      return nil, "Circuit breaker open"
+    end
+    
+    local success, result = pcall(operation, ...)
     
     if success then
-        circuitBreaker:RecordSuccess(serviceName)
-        return result
+      CircuitBreaker:RecordSuccess(name)
+      return result
     else
-        circuitBreaker:RecordFailure(serviceName)
-        return {
-            success = false,
-            error = result,
-            code = "SERVICE_ERROR",
-            service = serviceName
-        }
+      CircuitBreaker:RecordFailure(name)
+      if fallback then
+        return fallback(...)
+      end
+      return nil, result
     end
+  end
 end
 
 -- Example usage
-local result = callWithCircuitBreaker("DataService", function()
-    return fetchPlayerData(player.UserId)
-end)
+local safePurchase = withCircuitBreaker(
+  "PurchaseService",
+  purchaseItem,
+  function(...)
+    return {success = false, error = "Service unavailable"}
+  end
+)
 
-if not result.success then
-    if result.code == "CIRCUIT_OPEN" then
-        warn("DataService unavailable, using cached data")
-        return getCachedPlayerData(player.UserId)
-    else
-        error("DataService error: " .. result.error)
+-- Promise-based integration
+function promiseWithCircuitBreaker(name, promiseFactory)
+  return Promise.new(function(resolve, reject)
+    if not CircuitBreaker:CanExecute(name) then
+      reject("Circuit breaker open")
+      return
     end
+    
+    promiseFactory()
+      :andThen(function(value)
+        CircuitBreaker:RecordSuccess(name)
+        resolve(value)
+      end)
+      :catch(function(error)
+        CircuitBreaker:RecordFailure(name)
+        reject(error)
+      end)
+  end)
+end</code></pre>
+
+        <h3>Monitoring and Metrics</h3>
+        <pre><code>-- Get circuit breaker status
+local function getBreakerStatus(name)
+  local breaker = CircuitBreaker.breakers[name]
+  if not breaker then
+    return {state = "not_configured"}
+  end
+  
+  return {
+    state = breaker.state,
+    failures = breaker.failures,
+    successes = breaker.successes,
+    lastFailure = breaker.lastFailure,
+    timeSinceFailure = os.clock() - breaker.lastFailure,
+    isOpen = breaker.state == "open",
+    isHalfOpen = breaker.state == "half-open",
+    isClosed = breaker.state == "closed"
+  }
 end
 
--- Monitoring
-task.spawn(function()
-    while true do
-        task.wait(10)
-        
-        local states = circuitBreaker:GetStates()
-        
-        for serviceName, state in pairs(states) do
-            if state == "open" then
-                warn(\`Circuit breaker OPEN for \${serviceName}\`)
-            elseif state == "half_open" then
-                print(\`Circuit breaker HALF-OPEN for \${serviceName}\`)
-            end
-        end
-    end
-end)`
+-- Health check endpoint
+local function healthCheck()
+  local services = {
+    "PurchaseService",
+    "InventoryService",
+    "DataService"
+  }
+  
+  local status = {}
+  for _, service in ipairs(services) do
+    status[service] = getBreakerStatus(service)
+  end
+  
+  return status
+end</code></pre>
+
+        <h3>Advanced Configuration</h3>
+        <pre><code>-- Dynamic configuration based on load
+local function configureBasedOnLoad()
+  local playerCount = #Players:GetPlayers()
+  
+  if playerCount > 100 then
+    -- Stricter limits under high load
+    CircuitBreaker.config.failureThreshold = 3
+    CircuitBreaker.config.timeout = 60
+  else
+    -- Normal operation
+    CircuitBreaker.config.failureThreshold = 5
+    CircuitBreaker.config.timeout = 30
+  end
+end
+
+-- Service-specific configurations
+local serviceConfigs = {
+  PurchaseService = {
+    failureThreshold = 3,  // More sensitive
+    timeout = 60,
+    successThreshold = 3
+  },
+  DataService = {
+    failureThreshold = 10,  // More tolerant
+    timeout = 10,
+    successThreshold = 1
+  }
+}
+
+function getServiceConfig(serviceName)
+  return serviceConfigs[serviceName] or CircuitBreaker.config
+end</code></pre>
+
+        <h3>Integration with Nexus</h3>
+        <pre><code>-- Automatic circuit breaking in Nexus
+local Nexus = require(script.NexusRemote).new()
+
+// All remote invocations automatically use circuit breakers
+// Failures are recorded automatically
+// Open circuits prevent further requests
+
+-- Custom circuit breaker configuration
+Nexus:RegisterRemote("PurchaseItem", "Function", {
+  performance = {
+    circuitBreaker = {
+      failureThreshold = 3,
+      timeout = 60
     }
+  }
+})
+
+-- Manual circuit breaker checks
+if not Nexus.circuitBreaker:CanExecute("PurchaseItem") then
+  UI:ShowServiceUnavailable()
+  return
+end
+
+-- Monitoring circuit breaker states
+for remoteName, breaker in pairs(Nexus.circuitBreaker.breakers) do
+  if breaker.state == "open" then
+    warn("Circuit open for:", remoteName, 
+          "for", os.clock() - breaker.lastFailure, "seconds")
+  end
+end</code></pre>
+      `
+    }
+  ],
+
+  "MemoryPool": [
+    {
+      "title": "MemoryPool Module",
+      "content": `
+        <p>The MemoryPool module provides object pooling for performance optimization, reducing garbage collection overhead in high-frequency operations.</p>
+
+        <h3>Core Features</h3>
+        <ul>
+          <li>Object pooling for frequent allocations</li>
+          <li>Configurable pool sizes per object type</li>
+          <li>Automatic cleanup of unused objects</li>
+          <li>Thread-safe acquisition and release</li>
+          <li>Performance monitoring and statistics</li>
+        </ul>
+
+        <h3>Basic Usage</h3>
+        <pre><code>local MemoryPool = require(script.MemoryPool).new()
+
+-- Initialize with pool size
+MemoryPool:Initialize(1000)  // Maximum 1000 objects per pool
+
+-- Acquire object from pool
+local packet = MemoryPool:Acquire("packet", function()
+  // Initializer called if pool is empty
+  return {
+    id = HttpService:GenerateGUID(false),
+    timestamp = os.clock(),
+    data = {}
+  }
+end)
+
+-- Use the object
+packet.data = {action = "jump", height = 10}
+packet.metadata = {sender = "player123"}
+
+-- Release back to pool
+MemoryPool:Release("packet", packet)
+// Object is cleared and returned to pool for reuse</code></pre>
+
+        <h3>Pool Configuration</h3>
+        <pre><code>-- Pre-configured pools
+MemoryPool.pools = {
+  packet = {
+    objects = {},      // Available objects
+    maxSize = 1000,    // Maximum pool size
+    created = 0,       // Total created
+    reused = 0         // Total reused
+  },
+  table = {
+    objects = {},
+    maxSize = 5000
+  },
+  string = {
+    objects = {},
+    maxSize = 10000
+  }
+}
+
+-- Custom pool creation
+function createCustomPool(name, maxSize, initializer)
+  MemoryPool.pools[name] = {
+    objects = {},
+    maxSize = maxSize,
+    initializer = initializer,
+    stats = {created = 0, reused = 0}
+  }
+end
+
+-- Dynamic pool sizing
+function adjustPoolSize(name, newSize)
+  local pool = MemoryPool.pools[name]
+  if pool then
+    pool.maxSize = newSize
+    
+    // Trim if necessary
+    while #pool.objects > newSize do
+      table.remove(pool.objects)
+    end
+  end
+end</code></pre>
+
+        <h3>Advanced Usage Patterns</h3>
+        <pre><code>-- Scoped acquisition (auto-release)
+function withPooledObject(poolName, initializer, callback)
+  local obj = MemoryPool:Acquire(poolName, initializer)
+  local success, result = pcall(callback, obj)
+  MemoryPool:Release(poolName, obj)
+  
+  if not success then
+    error(result)
+  end
+  
+  return result
+end
+
+-- Example: Creating a packet
+local packet = withPooledObject("packet", 
+  function() return {id = generateId()} end,
+  function(pkt)
+    pkt.data = serializeData(data)
+    pkt.timestamp = os.clock()
+    return sendPacket(pkt)
+  end
+)
+
+-- Batch processing with pooling
+function processBatch(items, processor)
+  local results = {}
+  local batchSize = #items
+  
+  // Acquire all objects first
+  local objects = {}
+  for i = 1, batchSize do
+    objects[i] = MemoryPool:Acquire("workItem", function()
+      return {index = i, data = nil}
+    end)
+  end
+  
+  // Process
+  for i, obj in ipairs(objects) do
+    obj.data = items[i]
+    results[i] = processor(obj)
+  end
+  
+  // Release all
+  for i, obj in ipairs(objects) do
+    MemoryPool:Release("workItem", obj)
+  end
+  
+  return results
+end</code></pre>
+
+        <h3>Performance Monitoring</h3>
+        <pre><code>-- Pool statistics
+function getPoolStats(poolName)
+  local pool = MemoryPool.pools[poolName]
+  if not pool then return nil end
+  
+  return {
+    available = #pool.objects,
+    maxSize = pool.maxSize,
+    utilization = #pool.objects / pool.maxSize,
+    created = pool.stats and pool.stats.created or 0,
+    reused = pool.stats and pool.stats.reused or 0,
+    hitRate = pool.stats and 
+              pool.stats.reused / math.max(1, pool.stats.created) 
+              or 0
+  }
+end
+
+-- Memory savings calculation
+function calculateMemorySavings()
+  local totalSaved = 0
+  
+  for name, pool in pairs(MemoryPool.pools) do
+    local objectSize = estimateObjectSize(name)
+    totalSaved = totalSaved + (#pool.objects * objectSize)
+  end
+  
+  return totalSaved
+end
+
+-- Automatic cleanup
+MemoryPool:Cleanup()
+// Removes excess objects from pools
+// Called automatically every 60 seconds</code></pre>
+
+        <h3>Integration with Other Modules</h3>
+        <pre><code>-- Integration with Serializer
+function serializeWithPool(data)
+  return withPooledObject("serializerBuffer",
+    function() return {} end,
+    function(buffer)
+      buffer.data = data
+      return Serializer:Serialize(buffer)
+    end
+  )
+end
+
+-- Integration with Validator
+function validateWithPool(data, schema)
+  return withPooledObject("validationContext",
+    function() return {data = {}, schema = {}} end,
+    function(ctx)
+      ctx.data = data
+      ctx.schema = schema
+      return Validator:Validate(ctx.data, ctx.schema)
+    end
+  )
+end
+
+-- Packet creation pipeline
+function createSecurePacket(remoteName, player, data)
+  return withPooledObject("packet",
+    function() 
+      return {
+        id = HttpService:GenerateGUID(false),
+        version = 2,
+        timestamp = os.clock()
+      }
+    end,
+    function(packet)
+      // Serialize with pool
+      packet.data = serializeWithPool(data)
+      
+      // Add metadata
+      packet.metadata = {
+        sender = player and player.UserId or "server",
+        remote = remoteName,
+        sessionId = player and Security:GetSessionId(player)
+      }
+      
+      // Calculate checksum
+      packet.checksum = Security:CalculateChecksum(packet)
+      
+      // Sign packet
+      packet.signature = Security:SignPacket(packet, player)
+      
+      return packet
+    end
+  )
+end</code></pre>
+
+        <h3>Best Practices</h3>
+        <pre><code>-- 1. Choose appropriate pool sizes
+// Small pools for rare objects
+// Large pools for frequently used objects
+// Monitor hit rates to adjust sizes
+
+-- 2. Always clear objects before release
+function safeRelease(poolName, obj)
+  if type(obj) == "table" then
+    table.clear(obj)
+  end
+  MemoryPool:Release(poolName, obj)
+end
+
+-- 3. Use scoped acquisition for safety
+local obj = MemoryPool:Acquire("pool", initializer)
+local success, err = pcall(function()
+  useObject(obj)
+end)
+safeRelease("pool", obj)
+if not success then error(err) end
+
+-- 4. Monitor pool performance
+task.spawn(function()
+  while true do
+    task.wait(60)
+    
+    for name, pool in pairs(MemoryPool.pools) do
+      local stats = getPoolStats(name)
+      if stats.hitRate < 0.5 then
+        // Pool is underutilized, consider reducing size
+        adjustPoolSize(name, math.floor(pool.maxSize * 0.75))
+      elseif stats.hitRate > 0.9 then
+        // Pool is overutilized, consider increasing size
+        adjustPoolSize(name, math.floor(pool.maxSize * 1.25))
+      end
+    end
+  end
+end)</code></pre>
+
+        <h3>Integration with Nexus</h3>
+        <pre><code>-- Automatic pooling in Nexus
+local Nexus = require(script.NexusRemote).new()
+
+// Nexus automatically uses memory pooling for:
+// 1. Packet creation and serialization
+// 2. Event batching buffers
+// 3. Response objects
+// 4. Validation contexts
+
+-- Custom pool configuration
+Nexus.memoryPool:Initialize(5000)  // 5000 object pool
+
+-- Manual pooling in handlers
+Nexus:On("HighFrequencyEvent", function(player, data)
+  // Use pooling for high-frequency events
+  local processed = withPooledObject("eventData",
+    function() return {} end,
+    function(buffer)
+      buffer.raw = data
+      buffer.processed = processData(data)
+      buffer.timestamp = os.clock()
+      return buffer.processed
+    end
+  )
+  
+  return processed
+end)
+
+-- Monitoring pool usage
+local poolStats = {}
+for name, pool in pairs(Nexus.memoryPool.pools) do
+  poolStats[name] = {
+    size = #pool.objects,
+    maxSize = pool.maxSize,
+    utilization = #pool.objects / pool.maxSize
+  }
+end
+
+Analytics:RecordEvent("MemoryPool", "Stats", poolStats)</code></pre>
+      `
+    }
+  ]
 };
 
 if (typeof module !== 'undefined' && module.exports) {
