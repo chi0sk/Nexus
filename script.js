@@ -3467,6 +3467,10 @@ end)`
     }
 };
 
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = contentData;
+}
+
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize theme
@@ -3647,6 +3651,91 @@ function copyCode() {
         }, 2000);
     });
 }
+
+function loadPageContent(pageId) {
+  const content = contentData[pageId];
+  if (!content) {
+    showNotFound();
+    return;
+  }
+  
+  const contentContainer = document.getElementById('content');
+  contentContainer.innerHTML = '';
+  
+  content.forEach(section => {
+    const sectionElement = document.createElement('div');
+    sectionElement.className = 'content-section';
+    
+    const titleElement = document.createElement('h2');
+    titleElement.textContent = section.title;
+    sectionElement.appendChild(titleElement);
+    
+    const contentElement = document.createElement('div');
+    contentElement.className = 'section-content';
+    contentElement.innerHTML = section.content;
+    sectionElement.appendChild(contentElement);
+    
+    contentContainer.appendChild(sectionElement);
+  });
+  
+  // Update active navigation
+  document.querySelectorAll('.sidebar a').forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('onclick')?.includes(pageId)) {
+      link.classList.add('active');
+    }
+  });
+  
+  // Update page title
+  document.title = `Nexus Remote - ${pageId}`;
+}
+
+function showNotFound() {
+  const contentContainer = document.getElementById('content');
+  contentContainer.innerHTML = `
+    <div class="not-found">
+      <h2>Page Not Found</h2>
+      <p>The requested page could not be found.</p>
+      <a href="#" onclick="loadPageContent('home')">Return to Home</a>
+    </div>
+  `;
+}
+
+// Update the sidebar navigation to include all pages
+const sidebarPages = [
+  {id: 'home', name: 'Home'},
+  {id: 'RegisterRemote', name: 'RegisterRemote'},
+  {id: 'Event Handlers', name: 'Event Handlers'},
+  {id: 'Communication', name: 'Communication'},
+  {id: 'Fire Events', name: 'Fire Events'},
+  {id: 'Invoke Functions', name: 'Invoke Functions'},
+  {id: 'Modules', name: 'Modules'},
+  {id: 'Validator', name: 'Validator'},
+  {id: 'Serializer', name: 'Serializer'},
+  {id: 'Security', name: 'Security'},
+  {id: 'RateLimiter', name: 'RateLimiter'},
+  {id: 'Promise', name: 'Promise'},
+  {id: 'CircuitBreaker', name: 'CircuitBreaker'},
+  {id: 'MemoryPool', name: 'MemoryPool'}
+];
+
+// Initialize sidebar
+function initSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  sidebarPages.forEach(page => {
+    const link = document.createElement('a');
+    link.href = '#';
+    link.textContent = page.name;
+    link.setAttribute('onclick', `loadPageContent('${page.id}')`);
+    sidebar.appendChild(link);
+  });
+}
+
+// Load home page by default
+window.onload = function() {
+  initSidebar();
+  loadPageContent('home');
+};
 
 // Search functionality
 function initSearch() {
