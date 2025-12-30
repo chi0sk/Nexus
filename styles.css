@@ -408,6 +408,195 @@ code, pre {
     letter-spacing: -0.5px;
 }
 
+.content-section {
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.content-section:last-child {
+  border-bottom: none;
+}
+
+.section-content {
+  line-height: 1.6;
+}
+
+/* Tables */
+.param-table, .comparison-table, .method-table, .module-table,
+.strategy-table, .state-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.param-table th, .comparison-table th, .method-table th,
+.module-table th, .strategy-table th, .state-table th {
+  background: #2c3e50;
+  color: white;
+  font-weight: 600;
+  text-align: left;
+  padding: 1rem;
+}
+
+.param-table td, .comparison-table td, .method-table td,
+.module-table td, .strategy-table td, .state-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.param-table tr:last-child td,
+.comparison-table tr:last-child td,
+.method-table tr:last-child td,
+.module-table tr:last-child td,
+.strategy-table tr:last-child td,
+.state-table tr:last-child td {
+  border-bottom: none;
+}
+
+.param-table tr:hover,
+.comparison-table tr:hover,
+.method-table tr:hover,
+.module-table tr:hover,
+.strategy-table tr:hover,
+.state-table tr:hover {
+  background: #f8f9fa;
+}
+
+/* Code blocks */
+pre {
+  background: #1e1e1e;
+  color: #d4d4d4;
+  padding: 1.5rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+code {
+  background: #f5f5f5;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 0.9em;
+}
+
+/* Type grid for Validator */
+.type-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.type-category {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.type-category h4 {
+  margin-top: 0;
+  color: #2c3e50;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 0.5rem;
+}
+
+.type-category ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.type-category li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+.type-category li:last-child {
+  border-bottom: none;
+}
+
+.type-category code {
+  background: #e8f4fc;
+  color: #2980b9;
+}
+
+/* Mermaid diagrams */
+.mermaid {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin: 1.5rem 0;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* 404 page */
+.not-found {
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.not-found h2 {
+  color: #e74c3c;
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.not-found p {
+  font-size: 1.2rem;
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+.not-found a {
+  display: inline-block;
+  background: #3498db;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.3s;
+}
+
+.not-found a:hover {
+  background: #2980b9;
+}
+
+/* Sidebar active state */
+.sidebar a.active {
+  background: #3498db;
+  color: white;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .type-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .param-table, .comparison-table, .method-table,
+  .module-table, .strategy-table, .state-table {
+    display: block;
+    overflow-x: auto;
+  }
+  
+  pre {
+    font-size: 0.8rem;
+    padding: 1rem;
+  }
+}
+
 .content-section h2 {
     font-size: 24px;
     font-weight: 600;
