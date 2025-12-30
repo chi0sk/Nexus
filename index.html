@@ -8,6 +8,34 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        /* Critical fix for code block readability */
+        pre, code {
+            background-color: #1e1e2e !important;
+            color: #e0e0e8 !important;
+            border: 1px solid #2a2a3a !important;
+        }
+        
+        /* Inline code should be slightly different */
+        :not(pre) > code {
+            background-color: rgba(99, 91, 255, 0.1) !important;
+            color: var(--accent-primary) !important;
+            border: 1px solid rgba(99, 91, 255, 0.3) !important;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        
+        [data-theme="light"] pre,
+        [data-theme="light"] code {
+            background-color: #1e1e2e !important;
+            color: #e0e0e8 !important;
+        }
+        
+        [data-theme="light"] :not(pre) > code {
+            background-color: rgba(99, 91, 255, 0.15) !important;
+            color: #635bff !important;
+        }
+    </style>
 </head>
 <body>
     <!-- Header -->
@@ -53,41 +81,27 @@
                 <div class="nav-section">
                     <a href="#" class="nav-item active" data-page="about">
                         <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
-                        About
+                        Quick Start
                     </a>
-                    <a href="#" class="nav-item" data-page="getting-started">
-                        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd"/></svg>
-                        Getting Started
-                    </a>
-                    <a href="#" class="nav-item" data-page="architecture">
-                        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/></svg>
-                        Architecture
+                    <a href="#" class="nav-item" data-page="installation">
+                        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/></svg>
+                        Installation
                     </a>
                 </div>
 
                 <div class="nav-section">
                     <div class="nav-section-title">Core API</div>
-                    <a href="#" class="nav-item" data-page="nexusremote">NexusRemote</a>
-                    <a href="#" class="nav-item" data-page="initialization">Initialize</a>
                     <a href="#" class="nav-item" data-page="register-remote">RegisterRemote</a>
                     <a href="#" class="nav-item" data-page="handlers">Event Handlers</a>
-                </div>
-
-                <div class="nav-section">
-                    <div class="nav-section-title">Communication</div>
                     <a href="#" class="nav-item" data-page="fire">Fire Events</a>
                     <a href="#" class="nav-item" data-page="invoke">Invoke Functions</a>
                 </div>
 
                 <div class="nav-section">
-                    <div class="nav-section-title">Modules</div>
-                    <a href="#" class="nav-item" data-page="validator">Validator</a>
-                    <a href="#" class="nav-item" data-page="serializer">Serializer</a>
+                    <div class="nav-section-title">Advanced</div>
+                    <a href="#" class="nav-item" data-page="batching">Batching</a>
                     <a href="#" class="nav-item" data-page="security">Security</a>
-                    <a href="#" class="nav-item" data-page="ratelimiter">RateLimiter</a>
-                    <a href="#" class="nav-item" data-page="promise">Promise</a>
-                    <a href="#" class="nav-item" data-page="circuitbreaker">CircuitBreaker</a>
-                    <a href="#" class="nav-item" data-page="memorypool">MemoryPool</a>
+                    <a href="#" class="nav-item" data-page="validation">Validation</a>
                 </div>
             </nav>
         </aside>
